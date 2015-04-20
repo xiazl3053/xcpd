@@ -123,7 +123,7 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     rtspInfo.strUser = aryCode[2];
     rtspInfo.strPwd = aryCode[3];
     
-    int nResult = [self protocolInit:rtspInfo path:@"3456789" channel:0 code:1];
+    int nResult = [self protocolInit:rtspInfo path:@"3456789" channel:[aryCode[4] intValue] code:1];
     
     if (nResult==1)
     {
@@ -176,17 +176,15 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     {
         return 996;
     }
-    setUserData((__bridge void*)_aryVideo);
     __weak PrivateSource *weakSelf = self;
-//    rtspConnect_time_out = 30;
- //   bConnect = YES;
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    dispatch_async(dispatch_get_global_queue(0, 0),
+    ^{
         [weakSelf ffmpegInit];
     });
     ret = private_protocol_getStream(info,nChannel,nCode);
     if(ret==0)
     {
-  //      strRtspPath = strPath;
+        info->aryVideo = (__bridge void*)_aryVideo;
     }
     else
     {
@@ -200,23 +198,23 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
 {
     av_register_all();
     avcodec_register_all();
-    
-    pFormatCtx = NULL;
-    AVInputFormat* pAvinputFmt = NULL;
-    AVIOContext		*pb = NULL;
-    uint8_t	*buf = NULL;
-    buf = (uint8_t*)malloc(sizeof(uint8_t)*1024);
-    pb = avio_alloc_context(buf, 1024, 0, (__bridge void *)(_aryVideo), getVideoFrame,NULL,NULL);
-    pAvinputFmt = av_find_input_format("H264");
-    pFormatCtx = avformat_alloc_context();
-    pFormatCtx->pb = pb;
-    if(avformat_open_input(&pFormatCtx, "", pAvinputFmt, NULL) != 0 )
-    {
-        pFormatCtx = NULL;
-        av_free(pb);
-        _fps = -1;
-        return NO;
-    }
+//    
+//    pFormatCtx = NULL;
+//    AVInputFormat* pAvinputFmt = NULL;
+//    AVIOContext		*pb = NULL;
+//    uint8_t	*buf = NULL;
+//    buf = (uint8_t*)malloc(sizeof(uint8_t)*1024);
+//    pb = avio_alloc_context(buf, 1024, 0, (__bridge void *)(_aryVideo), getVideoFrame,NULL,NULL);
+//    pAvinputFmt = av_find_input_format("H264");
+//    pFormatCtx = avformat_alloc_context();
+//    pFormatCtx->pb = pb;
+//    if(avformat_open_input(&pFormatCtx, "", pAvinputFmt, NULL) != 0 )
+//    {
+//        pFormatCtx = NULL;
+//        av_free(pb);
+//        _fps = -1;
+//        return NO;
+//    }
     DLog(@"找到视频信息");
     _fps = 25;
     return YES;
@@ -229,28 +227,62 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
  */
 -(NSData*)getNextFrame
 {
-    AVPacket packet;
-    av_init_packet(&packet);
-    int nRef ;
-    nRef = av_read_frame(pFormatCtx,&packet);
-    if (nRef>=0)
+    if (!info)
     {
-        NSData *data = [NSData dataWithBytes:packet.data length:packet.size];
-        av_free_packet(&packet);
-        if (bRecord)
+        return nil;
+    }
+    CGFloat fTime=0;
+    while (YES)
+    {
+        if(_aryVideo.count==0)
         {
-            [fileHandle writeData:data];
-            [fileHandle seekToEndOfFile];
-            nAllCount++;
+            [NSThread sleepForTimeInterval:0.1f];
+            fTime += 0.1;
+            if(fTime>30)
+            {
+                [self sendMessage];
+                break;
+            }
+            continue;
         }
-        return data;
+        else
+        {
+            @synchronized(_aryVideo)
+            {
+                NSData *data = [_aryVideo objectAtIndex:0];
+                [_aryVideo removeObjectAtIndex:0];
+                if (bRecord)
+                {
+                    [fileHandle writeData:data];
+                    [fileHandle seekToEndOfFile];
+                    nAllCount ++;
+                }
+                return data;
+            }
+        }
     }
-    else
-    {
-        //发送失败信息
-        [self sendMessage];
-    }
-    av_free_packet(&packet);
+//    AVPacket packet;
+//    av_init_packet(&packet);
+//    int nRef ;
+//    nRef = av_read_frame(pFormatCtx,&packet);
+//    if (nRef>=0)
+//    {
+//        NSData *data = [NSData dataWithBytes:packet.data length:packet.size];
+//        av_free_packet(&packet);
+//        if (bRecord)
+//        {
+//            [fileHandle writeData:data];
+//            [fileHandle seekToEndOfFile];
+//            nAllCount++;
+//        }
+//        return data;
+//    }
+//    else
+//    {
+//        //发送失败信息
+//        [self sendMessage];
+//    }
+//    av_free_packet(&packet);
     return  nil;
 }
 /**
@@ -265,12 +297,12 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
  */
 -(void)destorySource
 {
-    if(pFormatCtx)
-    {
-        avformat_close_input(&pFormatCtx);
-    }
-    private_protocol_stop(&info);
-    
+//    if(pFormatCtx)
+//    {
+//        avformat_close_input(&pFormatCtx);
+//    }
+//    private_protocol_stop(&info);
+//    
 }
 
 -(void)startRecording:(NSString *)strFile
@@ -303,6 +335,17 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     recordModel.nFrameBit = 25;
     recordModel.nFramesNum = nAllCount;
     [RecordingService stopRecordInfo:recordModel];
+}
+
+-(void)dealloc
+{
+    
+    @synchronized(_aryVideo)
+    {
+        [_aryVideo removeAllObjects];
+    }
+    _aryVideo = nil;
+    private_protocol_stop(&info);
 }
 
 @end

@@ -50,18 +50,9 @@
 -(void)setNetwork:(NSString*)strName
 {
     __weak UIWindow *window = _window;
-//    if (IOS_SYSTEM_8)
-//    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [window makeToast:XCLocalized(strName)];
-        });
-//    }
-//    else
-//    {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [window makeToast:<#(NSString *)#>];
-//        });
-//    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [window makeToast:XCLocalized(strName)];
+    });
 }
 -(void)reachabilityChanged:(NSNotification*)note
 {

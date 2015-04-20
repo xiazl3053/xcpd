@@ -26,32 +26,35 @@
     UIView *view = [[UIView alloc] initWithFrame:Rect(0, 0, self.frame.size.width, 64)];
     [self addSubview:view];
     
-    [view setBackgroundColor:RGB(15, 173, 225)];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:view.bounds];
+    [imgView setImage:[UIImage imageNamed:@"top_bg"]];
+    [view addSubview:imgView];
+    
     UIButton *btnSave = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnSave setTitle:XCLocalized(@"save") forState:UIControlStateNormal];
-    [btnSave setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    btnSave.frame = Rect(self.width-50, 20, 44,44);
+    [btnSave setTitleColor:RGB(15, 173, 225) forState:UIControlStateNormal];
+    btnSave.frame = Rect(self.width-70, 10, 60,44);
     [btnSave addTarget:self action:@selector(saveInfo) forControlEvents:UIControlEventTouchUpInside];
     [view addSubview:btnSave];
     
-    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(100, 30,self.width-200, 20)];
+    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(100, 20,self.width-200, 20)];
     [lblName setFont:XCFONT(20)];
-    [lblName setTextColor:[UIColor whiteColor]];
+    [lblName setTextColor:[UIColor blackColor]];
     [lblName setText:strName];
     [view addSubview:lblName];
     [lblName setTextAlignment:NSTextAlignmentCenter];
     
     UIButton *btnCancel = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnCancel setTitle:XCLocalized(@"cancel") forState:UIControlStateNormal];
-    [btnCancel setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [btnCancel setTitleColor:RGB(15, 173, 225) forState:UIControlStateNormal];
     [btnCancel addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:btnCancel];
-    btnCancel.frame = Rect(25, 20, 44,44);
+    [view addSubview:btnCancel];
+    btnCancel.frame = Rect(25, 10, 60,44);
+    
 }
 
 -(void)closeView
 {
-//    self.hidden = YES;
     if (_delegate && [_delegate respondsToSelector:@selector(closeDirectView)]) {
         [_delegate closeDirectView];
     }
@@ -66,16 +69,16 @@
         UISegmentedControl* segControl = ((UISegmentedControl*)[self viewWithTag:10009]);
         switch(segControl.selectedSegmentIndex)
         {
-        case 0:
-                strType = @"IPC";
+            case 0:
+               strType = @"IPC";
             break;
-        case 1:
+            case 1:
                 strType = @"DVR";
-                break;
+            break;
             case 2:
                 strType = @"NVR";
-                break;
-        default:
+            break;
+            default:
                 strType = @"IPC";
             break;
         }
@@ -119,13 +122,12 @@
     
 }
 
-
-
 -(void)segmentAction:(UISegmentedControl*)sender
 {
     NSInteger Index = sender.selectedSegmentIndex;
-    NSLog(@"Seg.selectedSegmentIndex:%d",Index);
-   [((DirectInfoView*)[self viewWithTag:10001]) setDevType:Index];
+    NSLog(@"Seg.selectedSegmentIndex:%d",(int)Index);
+    DirectInfoView *directView = (DirectInfoView*)[self viewWithTag:10001];
+    [directView setDevType:(int)Index];
 }
 
 

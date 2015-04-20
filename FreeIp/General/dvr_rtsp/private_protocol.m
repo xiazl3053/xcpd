@@ -28,8 +28,6 @@
 #endif
 
 typedef void*(*sthread)(void*);
-GET_NEXT_FRAME_DATA frameFun;
-NSMutableArray *arrayVideo;
 int CreatThread(sthread func,void* param)
 {
 	int iRet=0;
@@ -150,23 +148,7 @@ void* private_protocol_stop(private_protocol_info_t **pStreamInfo)
         }
         DLog(@"1111111111");
         [NSThread sleepForTimeInterval:0.25f];
-//        else
-//        {
-//            DLog(@"这里释放");
-//            if(count<5)
-//            {
-//                count++;
-//           //     sleep(1);
-//                continue;
-//            }
-//            else
-//            {
-//                PP_FREE(*pStreamInfo);
-//                break;
-//            }
-//        }
     }
-    
 	if(iRet != 0)
 	{
 		printf("CreatThread failed!\n");
@@ -198,31 +180,36 @@ void* private_protocol_heartbeat(private_protocol_info_t *arg )
     return NULL;
 }
 
-void setUserData(void* user)
+void RecvOneFramedata(char *data,int datalen,void* arg)
 {
-    arrayVideo = (__bridge NSMutableArray*)user;
-}
-
-void RecvOneFramedata(char *data,int datalen)
-{
-    unsigned char* pBuf = (unsigned char*)malloc(1024);
-    int nTemp = 1024;
-    int nCurSize = 0,nRead = 0;
-    //每次读取4096个字节
-    while (nCurSize!=datalen)
+    private_protocol_info_t *info = (private_protocol_info_t*)arg;
+    NSMutableArray *aryVideo = (__bridge NSMutableArray *)(info->aryVideo);
+    @synchronized(aryVideo)
     {
-        nRead = ((datalen - nCurSize) > nTemp) ? nTemp : (datalen - nCurSize);
-        memcpy(pBuf, data+nCurSize, nRead);
-        nCurSize +=nRead;
-        NSData *dataInfo = [[NSData alloc] initWithBytes:pBuf length:nRead];
-        @synchronized(arrayVideo)
-        {
-            [arrayVideo addObject:dataInfo];
-        }
-        dataInfo = nil;
+        NSData *dataInfo = [[NSData alloc] initWithBytes:data length:datalen];
+        [aryVideo addObject:dataInfo];
+        dataInfo=nil;
     }
-    
-    free(pBuf);
+   
+//    unsigned char* cBuf = (unsigned char*)malloc(1024);
+//    int nTemp = 1024;
+//    int nCurSize = 0,nRead = 0;
+//    while (nCurSize != datalen) {
+//        nRead = ((datalen-nCurSize)>nTemp) ? nTemp : (datalen-nCurSize);
+//        memcpy(cBuf, data+nCurSize, nRead);
+//        nCurSize += nRead;
+//        if(!aryVideo)
+//        {
+//            return ;
+//        }
+//        @synchronized(aryVideo)
+//        {
+//            NSData *dataInfo = [[NSData alloc] initWithBytes:cBuf length:nRead];
+//            [aryVideo addObject:[NSData dataWithBytes:cBuf length:nRead]];
+//            dataInfo=nil;
+//        }   
+//    }
+//    free(cBuf);
 }
 
 int  Recvmsg(int msocket,char *buff,int datalen)
@@ -261,7 +248,7 @@ void* recvStream( void *arg)
     }
     char *buff = NULL;
     private_protocol_info_t *streaminfo = NULL;
-    streaminfo =	(private_protocol_info_t*)arg;
+    streaminfo = (private_protocol_info_t*)arg;
     ARG_STREAM Stream;
     DLog(@"ARG_STREAM:%li",sizeof(ARG_STREAM));
     char recvstate=0;	
@@ -302,7 +289,7 @@ void* recvStream( void *arg)
             DLog(@"exit");
             break;
         }
-        RecvOneFramedata(buff,Stream.bSize);
+        RecvOneFramedata(buff,Stream.bSize,streaminfo);
     }
     PP_FREE(buff);		
     if(recvstate <0)

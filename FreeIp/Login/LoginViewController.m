@@ -45,16 +45,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    [self.view setBackgroundColor:[UIColor whiteColor]];
-//    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:YES];
     [self initUIHead];
-    
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(BOOL)shouldAutorotate

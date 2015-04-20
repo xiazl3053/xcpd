@@ -251,16 +251,16 @@ typedef struct private_protocol_info_t
     unsigned long userId;
     unsigned long cmdState;
     
- //
-
-}private_protocol_info_t;
+    void *aryVideo;
+}
+private_protocol_info_t;
 
 private_protocol_info_t *private_protocol_init();
 void* private_protocol_stop(private_protocol_info_t  **pStreamInfo);
 int private_protocol_login(private_protocol_info_t *pStreamInfo, unsigned int ip, unsigned int port, char *name, char *passwd);
 int private_protocol_getStream(private_protocol_info_t *pStreamInfo, int channelNo, int streamNo);
 void setFrameData(GET_NEXT_FRAME_DATA frame);
-void RecvOneFramedata(char *data,int datalen);
+void RecvOneFramedata(char *data,int datalen,void *arg);
 
 int StartGetStream(private_protocol_info_t *arg);
 void* private_protocol_heartbeat(private_protocol_info_t *arg);
@@ -268,10 +268,8 @@ void* private_protocol_sendHeartbeat(void *arg);
 void* private_protocol_recvHeartbeat(void *arg);
 int SK_ConnectTo(unsigned int ip,int port);
 int SK_SelectWait(unsigned int fd, int msec);
-    int private_protocol_logout(private_protocol_info_t *pStreamInfo);
+int private_protocol_logout(private_protocol_info_t *pStreamInfo);
 
-void setUserData(void* user);
-    
 
 #ifdef __cplusplus
 

@@ -46,6 +46,14 @@
     [super layoutSubviews];
     [self.contentView viewWithTag:12349].frame = Rect(21, 80, kScreenWidth, 0.2);
     [self.contentView viewWithTag:12350].frame = Rect(21, 80.2, kScreenWidth, 0.2);
+    if (!_bSon)
+    {
+        UIView *view = [self.contentView viewWithTag:10089];
+        if (view)
+        {
+            [view removeFromSuperview];
+        }
+    }
 }
 
 -(void)addViewLine:(CGFloat)fHight

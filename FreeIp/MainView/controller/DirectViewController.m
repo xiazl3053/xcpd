@@ -8,6 +8,8 @@
 
 #import "DirectViewController.h"
 #import "UtilsMacro.h"
+#import "XCHIddenView.h"
+#import "XCBtnChannel.h"
 #import "UIView+Extension.h"
 #import "VideoView.h"
 #import "XCNotification.h"
@@ -28,6 +30,7 @@
     UIView *headView;
     CGFloat fWidth,fHeight;
     UIView *sonView;
+    BOOL bIsOpen;
     NSMutableArray *aryView;
     CGFloat fSrcWidth,fSrcHeight;
     CGFloat fDestWidth,fDestHeight;
@@ -40,7 +43,9 @@
     BOOL bFull;
     NSMutableDictionary *_aryTable;
 //    RTSPPlayViewController *rtspPlay;
-    
+    NSInteger nRow;
+    NSIndexPath *selectPath;
+    NSInteger nSelectType;
 //    PrivatePlayViewController *privateView;
     NSMutableArray *_aryRtsp;
 }
@@ -83,7 +88,7 @@
     imgBgHead.frame = headView.bounds;
     [headView addSubview:imgBgHead];
     
-    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(17, 30, 100, 20)];
+    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(17, 20, 100, 20)];
     [lblName setFont:XCFONT(20)];
     [lblName setTextColor:RGB(100,100, 100)];
     [lblName setText:XCLocalized(@"deviceList")];
@@ -93,7 +98,7 @@
     [btnAdd setImage:[UIImage imageNamed:@"add_dir"] forState:UIControlStateNormal];
     [btnAdd setImage:[UIImage imageNamed:@"add_dir_h"] forState:UIControlStateHighlighted];
     [headView addSubview:btnAdd];
-    btnAdd.frame = Rect(kHomeListWidth-50, 20, 44, 44);
+    btnAdd.frame = Rect(kHomeListWidth-50, 10, 44, 44);
     [btnAdd addTarget:self action:@selector(setAddModel) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *btnDel = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -102,7 +107,7 @@
     [btnDel setImage:[UIImage imageNamed:@""] forState:UIControlStateSelected];
     [btnDel addTarget:self action:@selector(delDevice:) forControlEvents:UIControlEventTouchUpInside];
     [headView addSubview:btnDel];
-    btnDel.frame = Rect(kHomeListWidth-100, 20, 44, 44);
+    btnDel.frame = Rect(kHomeListWidth-100, 10, 44, 44);
     [_tableView setTableHeaderView:headView];
     [_tableView setBackgroundView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_bg"]]];
     
@@ -384,7 +389,21 @@
         directCell = [[DirectCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:strIdentifier];
     }
     directCell.backgroundColor = [UIColor clearColor];
-    [directCell setDeviceInfo:((RtspInfo*)[_aryRtsp objectAtIndex:indexPath.row])];
+    RtspInfo *rtsp = (RtspInfo*)[_aryRtsp objectAtIndex:indexPath.row];
+    [directCell setDeviceInfo:rtsp];
+    
+    if(nRow == indexPath.row)
+     {
+         if (bIsOpen)
+         {
+            CGFloat fHdHight = kSonHomeListheight * (rtsp.nChannel > 8 ? 8 :rtsp.nChannel);
+            DLog(@"fHdHeight:%f",fHdHight);
+            XCHiddenView *hdView = [[XCHiddenView alloc] initWithFrame:Rect(0, 82.5, kHomeListWidth,fHdHight) number:(int)rtsp.nChannel];
+            hdView.tag = 10089;
+            directCell.bSon = YES;
+            [directCell.contentView addSubview:hdView];
+        }
+    }
     return directCell;
 }
 
@@ -404,9 +423,51 @@
     
     
     RtspInfo *rtspInfo = (RtspInfo*)[_aryRtsp objectAtIndex:indexPath.row];
-    
-    
+    if(![rtspInfo.strType isEqualToString:@"IPC"])
+    {
+             NSArray *indexPaths = nil;
+            //如果上一次点击的是多通道设备
+            //这次点击继续是多通道设备,两次不是同一行，需要先设置隐藏
+            if (nSelectType==2 && selectPath != indexPath)
+            {
+                //找到上一次记录,隐藏
+                DirectCell *cell = (DirectCell*)[_tableView cellForRowAtIndexPath:selectPath];
+                cell.bSon = NO;
+                if (!bIsOpen)
+                {
+                    bIsOpen = !bIsOpen;
+                }
+            }
+            else
+            {
+                if (selectPath!=nil) {
+                    DirectCell *cell = (DirectCell*)[_tableView cellForRowAtIndexPath:selectPath];
+                    cell.bSon = NO;
+                }
+                bIsOpen = !bIsOpen;
+            }
+            indexPaths = [NSArray arrayWithObjects:indexPath,nil];
+            selectPath = indexPath;
+            nRow = indexPath.row;
+            nSelectType = 2;
+            [_tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+            return;
+    }
+    nSelectType = 1;
+    if (bIsOpen)
+    {
+         //如果之前已经打开了通道界面
+         //删除此界面
+        DirectCell *cell = (DirectCell*)[_tableView cellForRowAtIndexPath:selectPath];
+        cell.bSon = NO;
+        NSArray *indexPaths = [NSArray arrayWithObjects:indexPath,selectPath,nil];
+        selectPath = indexPath;
+        nRow = -1;
+        [_tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+        bIsOpen = NO;
+    }
     [self startPlay:rtspInfo];
+
 }
 
 
@@ -426,13 +487,20 @@
     return YES;
 }
 
--(void)startPlay:(RtspInfo*)rtspInfo
+
+-(void)startPlay:(RtspInfo *)rtspInfo
+{
+    [self startPlay:rtspInfo channel:0];
+}
+
+
+-(void)startPlay:(RtspInfo*)rtspInfo channel:(int)nChannel
 {
     PlayViewController *playViewController;
     NSString *strPath =nil;
     if([rtspInfo.strType isEqualToString:@"DVR"])
     {
-        strPath = [NSString stringWithFormat:@"%@@%d@%@@%@",rtspInfo.strAddress,(int)rtspInfo.nPort,rtspInfo.strUser,rtspInfo.strPwd];
+        strPath = [NSString stringWithFormat:@"%@@%d@%@@%@@%d",rtspInfo.strAddress,(int)rtspInfo.nPort,rtspInfo.strUser,rtspInfo.strPwd,nChannel];
 
         if([self changeVideoView:strPath])
         {
@@ -450,7 +518,7 @@
         }
         else
         {
-            strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/01",strAdmin,rtspInfo.strAddress,(int)rtspInfo.nPort];
+            strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/%d1",strAdmin,rtspInfo.strAddress,(int)rtspInfo.nPort,nChannel];
             
         }
         DLog(@"strPath:%@",strPath);
@@ -468,6 +536,26 @@
 }
 
 
+#pragma mark 链接失败
+-(void)connectFailDirect:(NSNotification*)notify
+{
+    NSString *strKey = notify.object;
+    PlayViewController *playView = [_aryModel objectForKey:strKey];
+     if (!playView) {
+        return ;
+    }
+    VideoView *video = (VideoView*)playView.view.superview;
+    __weak PlayViewController *__playView = playView;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [__playView.view removeFromSuperview];
+    });
+    __weak VideoView *__view = video;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [__view makeToast:XCLocalized(@"connectFail") duration:1.5 position:@"center"];
+    });
+    [_aryModel removeObjectForKey:strKey];
+    
+}
 
 #pragma mark 丢失连接
 -(void)directDisConnectView:(NSNotification *)notify
@@ -478,13 +566,17 @@
         return ;
     }
     __weak PlayViewController *__playView = playView;
-
+    VideoView *video = (VideoView*)playView.view.superview;
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_async(group, dispatch_get_main_queue(),^{
         [__playView stopPlay];
     });
     dispatch_async(dispatch_get_main_queue(), ^{
         [__playView.view removeFromSuperview];
+    });
+    __weak VideoView *__view = video;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [__view makeToast:XCLocalized(@"DisConnect") duration:1.5 position:@"center"];
     });
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
     [_aryModel removeObjectForKey:strKey];
@@ -535,7 +627,14 @@
 
 -(void)doubleClickVideo:(id)sender
 {
-    
+    if (bFull)
+    {
+        [self setFourView];
+    }
+    else
+    {
+        [self setOnlyView];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -548,6 +647,16 @@
 #pragma mark tableView高度，与选择设置
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (bIsOpen)
+    {
+        if(nRow == indexPath.row)
+        {
+            DLog(@"come!");
+            RtspInfo *rtsp = (RtspInfo*)[_aryRtsp objectAtIndex:indexPath.row];
+            CGFloat fHDView = kSonHomeListheight * (rtsp.nChannel > 8 ? 8 :rtsp.nChannel);
+            return 82.5+fHDView;
+        }
+    }
     return 82.5;
 }
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -616,5 +725,33 @@
 {
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(directDisConnectView:) name:NSCONNECT_P2P_DISCONNECT object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailDirect:) name:NS_CLOSE_PRIVATE_VC object:nil];
+//    [NSNotificationCenter defaultCenter] addObserver:self selector:@selector() name: object:<#(id)#>
 }
+
+-(void)connectDVR:(NSNotification *)notify
+{
+    RtspInfo *rtsp = (RtspInfo *)[_aryRtsp objectAtIndex:selectPath.row];
+    int nChannel = [notify.object intValue];
+    DLog(@"connect:%@--%d",rtsp.strAddress,nChannel);
+    __block int __nChannel = nChannel;
+    __weak DirectViewController *__self = self;
+    __weak RtspInfo *__rtsp = rtsp;
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+         [__self startPlay:__rtsp channel:__nChannel];
+    }
+    );
+}
+
+
+
+
+
+
+
+
+    
+
 @end

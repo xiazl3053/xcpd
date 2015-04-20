@@ -10,6 +10,7 @@
 #import "RtspInfo.h"
 @interface DirectCell : UITableViewCell
 
+@property (nonatomic,assign) BOOL bSon;
 
 -(void)setDeviceInfo:(RtspInfo *)devInfo;
 -(void)addLine;

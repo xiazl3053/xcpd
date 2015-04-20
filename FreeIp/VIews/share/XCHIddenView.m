@@ -33,12 +33,12 @@
     _scrolView = [[UIScrollView alloc] initWithFrame:self.bounds];
     [self addSubview:_scrolView];
     
-    CGFloat fWidth = 150;
+    CGFloat fWidth = 180;
     int i=0;
     while(i<nNumber)
     {
         NSString *strTitle = [NSString stringWithFormat:@"%@ %d",XCLocalized(@"channel"),i+1];
-        XCBtnChannel *btnChannel =[[XCBtnChannel alloc] initWithFrame:Rect(50, i*kSonHomeListheight, fWidth, kSonHomeListheight) title:strTitle normal:@"smail_channel"];
+        XCBtnChannel *btnChannel =[[XCBtnChannel alloc] initWithFrame:Rect(30, i*kSonHomeListheight, fWidth, kSonHomeListheight) title:strTitle normal:@"smail_channel"];
         [_scrolView addSubview:btnChannel];
         btnChannel.tag = i;
         [btnChannel addTarget:self action:@selector(touchChannelEvent:) forControlEvents:UIControlEventTouchUpInside];

@@ -33,12 +33,12 @@
 
 -(CGRect)titleRectForContentRect:(CGRect)contentRect
 {
-    return Rect(51.5, 15, 80, 15);
+    return Rect(71, 20, 80, 15);
 }
 
 -(CGRect)imageRectForContentRect:(CGRect)contentRect
 {
-    return Rect(10, 15, 31.5, 25);
+    return Rect(10, 7.5, 50, 40);
 }
 
 @end

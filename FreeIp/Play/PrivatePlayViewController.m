@@ -8,6 +8,7 @@
 
 #import "PrivatePlayViewController.h"
 #import "XLDecoder.h"
+#import "XCNotification.h"
 #import "PrivateSource.h"
 
 #import "Toast+UIView.h"
@@ -101,5 +102,22 @@
         [self stopPlay];
     }
 }
+
+-(void)startPlay
+{
+    [super stopPlay];
+    self.bPlaying = NO;
+//    [_privateSrc releaseDecode];
+    _privateSrc = nil;
+    __weak PrivatePlayViewController *__weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+         [__weakSelf.imgView hideToastActivity];
+         [__weakSelf.imgView setImage:nil];
+    });
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_PRIVATE_VC object:self.strKey];
+}
+
+
 
 @end
