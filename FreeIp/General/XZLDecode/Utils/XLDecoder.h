@@ -8,10 +8,17 @@
 
 #import "IDecoder.h"
 #import "IDecodeSource.h"
+
 @interface XLDecoder : IDecoder
 
 @property (nonatomic,strong) IDecodeSource *decodeSrc;
 
 -(void)decoderInit;
+
 -(NSArray*)decodeFrame;
+
+-(CGFloat)getPosition;
+
+
+-(void)setPosition:(CGFloat)fValue;
 @end

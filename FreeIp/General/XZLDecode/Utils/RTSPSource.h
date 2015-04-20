@@ -33,5 +33,6 @@
  */
 -(void)destorySource;
 
+-(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName;
 
 @end

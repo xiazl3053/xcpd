@@ -8,6 +8,9 @@
 
 #import "CustomViewController.h"
 
-@interface IndexViewController : CustomViewController
+@interface IndexViewController :UIViewController
 
+
+
+-(void)setIndexTabBarHidden:(BOOL)bHidden;
 @end

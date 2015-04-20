@@ -8,6 +8,31 @@
 
 #import <UIKit/UIKit.h>
 
+
+@protocol XCTabBarDelegate <NSObject>
+
+-(void)clickView:(UIButton*)btnSender index:(int)nIndex;
+
+@end
+
 @interface XCTabPd : UIView
+
+@property (nonatomic,assign) id<XCTabBarDelegate> delegate;
+
+-(id)initWithArrayItem:(NSArray*)item frame:(CGRect)srcFrame;
+
+
+@end
+
+
+@interface BtnInfo : NSObject
+
+@property (nonatomic,copy) NSString *strNorImg;
+@property (nonatomic,copy) NSString *strSelectImg;
+@property (nonatomic,copy) NSString *strHighImg;
+@property (nonatomic,copy) NSString *strTitle;
+
+-(id)initWithItem:(NSArray*)item;
+
 
 @end

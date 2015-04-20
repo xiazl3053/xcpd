@@ -4,6 +4,8 @@
 #import "PTPSource.h"
 #import "P2PSDKService.h"
 #import "XCNotification.h"
+#import "RecordModel.h"
+#import "RecordingService.h"
 
 #import "P2PInitService.h"
 @interface PTPSource()
@@ -11,11 +13,14 @@
     RecvFile *recv;
     int nconnection;
     BOOL bDestorySDK;
+    BOOL bRecord;
+    NSFileHandle *fileHandle;
+    NSUInteger nAllCount;
+    RecordModel *recordModel;
 }
 @property (nonatomic,assign) BOOL bNotify;
 @property (nonatomic,assign) int nNum;
-@property (nonatomic,copy) NSString *strNo;
-//@property (nonatomic,st)
+
 @property (nonatomic,assign) int nCodeType;
 @property (nonatomic,assign) BOOL bP2P;
 @property (nonatomic,assign) BOOL bTran;
@@ -25,20 +30,28 @@
 
 @implementation PTPSource
 
--(id)initWithNO:(NSString *)strNO channel:(int)nChannel codeType:(int)nType
+-(id)initWithNo:(NSString *)strNO name:(NSString*)strDevName channel:(int)nChannel codeType:(int)nType
 {
     self = [super init];
     if (self)
     {
-        _strNo = strNO;
-        _nChannel = nChannel;
+        self.strPath = strNO;
+        self.nChannel = nChannel;
+        self.strName = strDevName;
+        if (nChannel==0)
+        {
+            self.strKey = strNO;
+        }
+        else
+        {
+            self.strKey = [NSString stringWithFormat:@"%@_%d",strNO,nChannel];
+        }
         _nCodeType = nType;
         nconnection = 1;
         _nNum = 0;
         _bNotify = YES;
     }
-    
-    return self ;
+    return self;
 }
 
 -(void)thread_gcd_PTP
@@ -134,7 +147,7 @@
         return  NO;
     }
     
-    recv = new RecvFile(sdk,0,(int)_nChannel);
+    recv = new RecvFile(sdk,0,self.nChannel);
 //    NSMutableArray *result = [NSMutableArray array];
     return YES;
 }
@@ -146,14 +159,15 @@
  *  @param strSource NO或者其他内容
  *
  *  @return
- */
+*/
+
 -(BOOL)connection:(NSString*)strSource
 {
     if(![self createP2PSdk])
     {
         return NO;
     }
-    recv->peerName = [_strNo UTF8String];
+    recv->peerName = [self.strPath UTF8String];
     
     [self thread_gcd_PTP];
     
@@ -166,7 +180,7 @@
         }
         [NSThread sleepForTimeInterval:0.8f];
     }
-    
+    recv->strKey = self.strKey;
     return YES;
 }
 
@@ -181,15 +195,35 @@
     {
         return nil;
     }
-    @synchronized(recv->aryVideo)
+    CGFloat fTime=0;
+    while (YES)
     {
         if(recv->aryVideo.count==0)
         {
-            return nil;
+            [NSThread sleepForTimeInterval:0.1f];
+            fTime += 0.1;
+            if(fTime>30)
+            {
+                [self sendMessage];
+                break;
+            }
+            continue;
         }
-        NSData *data = [recv->aryVideo objectAtIndex:0];
-        [recv->aryVideo removeObjectAtIndex:0];
-        return data;
+        else
+        {
+            @synchronized(recv->aryVideo)
+            {
+                NSData *data = [recv->aryVideo objectAtIndex:0];
+                [recv->aryVideo removeObjectAtIndex:0];
+                if (bRecord)
+                {
+                    [fileHandle writeData:data];
+                    [fileHandle seekToEndOfFile];
+                    nAllCount ++;
+                }
+                return data;
+            }
+        }
     }
     return nil;
 }
@@ -198,7 +232,7 @@
  */
 -(void)sendMessage
 {
-    
+      [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_DISCONNECT object:self.strKey];
 }
 /**
  *  资源释放
@@ -224,7 +258,6 @@
 {
     DLog(@"目标码流:%d",nCode);
     _nSwitchcode = NO;
-
     __weak PTPSource *__weakSelf = self;
     __block int __nCode = nCode;
     if(recv)
@@ -259,8 +292,6 @@
 #pragma mark 销毁Decode
 -(void)dealloc
 {
-  //  [self recordStop];
-    DLog(@"释放");
     if(recv)
     {
         recv->StopRecv();
@@ -268,9 +299,54 @@
     }
     if (bDestorySDK)
     {
-        DLog(@"释放");
         [[P2PInitService sharedP2PInitService] setP2PSDKNull];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:NS_SWITCH_TRAN_OPEN_VC object:nil];
 }
+
+-(void)startRecording:(NSString *)strFile
+{
+    if (recordModel)
+    {
+        recordModel = nil;
+    }
+    DLog(@"strpath;%@",self.strPath);
+    recordModel = [[RecordModel alloc] init];
+    recordModel.imgFile = strFile;
+    recordModel.strDevName = self.strName;
+    if([RecordingService startRecordInfo:recordModel])
+    {
+        if(fileHandle)
+        {
+            [fileHandle closeFile];
+            fileHandle= nil;
+        }
+        fileHandle = [NSFileHandle fileHandleForWritingAtPath:recordModel.strAbltFile];
+        
+        bRecord = YES;
+    }
+    nAllCount ++;
+}
+
+-(void)stopRecording
+{
+    bRecord = NO;
+    [fileHandle closeFile];
+    recordModel.strDevNO = self.strPath;
+    recordModel.nFrameBit = 25;
+    recordModel.nFramesNum = nAllCount;
+    DLog(@"nAllCount:%d",(int)nAllCount);
+    [RecordingService stopRecordInfo:recordModel];
+}
+
+/*
+          数据库记录添加编写
+          1.开始、包含一个抓拍动作的调用
+          2.持续编写，FileHandle
+          3.关闭、写入一个数据
+ */
+
+
+
+
 @end

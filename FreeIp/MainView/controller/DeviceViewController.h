@@ -7,7 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class  DeviceInfoModel;
 @interface DeviceViewController : UIViewController
+
+-(void)setFirstDevInfo:(DeviceInfoModel*)devInfo;
+
+-(void)setFrame:(CGRect)frame;
+
+-(id)initWithFrame:(CGRect)frame;
+
+-(void)setDeviceInfo:(DeviceInfoModel*)devInfo;
 
 @end

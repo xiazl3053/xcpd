@@ -26,4 +26,9 @@
     return nil;
 }
 
+-(void)stopDecode
+{
+    
+}
+
 @end

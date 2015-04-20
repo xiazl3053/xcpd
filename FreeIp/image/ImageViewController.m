@@ -8,6 +8,7 @@
 
 #import "ImageViewController.h"
 #import "CustomNaviBarView.h"
+#import "XCButton.h"
 #import "UtilsMacro.h"
 #import "ImageCell.h"
 #import "XCNotification.h"
@@ -15,13 +16,14 @@
 #import "PhoneDb.h"
 #import "RecordDb.h"
 #import "RecordModel.h"
-#import "PlayNetViewController.h"
 #import "Toast+UIView.h"
 #import "NSDate+convenience.h"
 #import "RecordView.h"
 #import "PictureView.h"
 #import "XCPhoto.h"
 #import "XCPhotoViewController.h"
+#import "UIView+Extension.h"
+
 
 @interface ImageViewController ()<UITableViewDelegate,UITableViewDataSource,RecordCellDelegate>
 {
@@ -31,6 +33,7 @@
     NSMutableDictionary *deleteRec;
     UILabel *lblNoImage;
     UIImageView *imgNo;
+    CGFloat fWidth,fHeight;
 }
 @property (nonatomic,strong) UITableView *tableView;
 
@@ -65,6 +68,22 @@
     DLog(@"image view dealloc");
 }
 
+
+-(void)loadView
+{
+    if (IOS_SYSTEM_8) {
+        fWidth = kScreenSourchWidth;
+        fHeight = kScreenSourchHeight;
+    }
+    else
+    {
+        fWidth = kScreenSourchHeight;
+        fHeight = kScreenSourchWidth;
+    }
+    self.view = [[UIView alloc] initWithFrame:Rect(0, 0, fWidth-kTabbarWidth-kHomeListWidth-1, fHeight)];
+}
+
+
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -79,17 +98,16 @@
 {
     [super viewDidLoad];
     [self initUI];
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, [CustomNaviBarView barSize].height, kScreenWidth, kScreenHeight -[CustomNaviBarView barSize].height+HEIGHT_MENU_VIEW(20, 0))];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,64, self.view.width, fHeight-64)];
     [self.view addSubview:_tableView];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
-    _arrayRecord = [NSMutableArray array];
     _arrayInfo = [[NSMutableArray alloc] init];
     _vrgCalendar = [[VRGCalendarView alloc] init];
     _vrgCalendar.delegate=self;
-    _vrgCalendar.frame = CGRectMake(0, [CustomNaviBarView barSize].height, kScreenWidth, 260);
+    _vrgCalendar.frame = CGRectMake(0, 64, self.view.width, 260);
     [self.view addSubview:_vrgCalendar];
     _vrgCalendar.hidden = YES;
 
@@ -102,13 +120,13 @@
     _tablePic = [NSMutableDictionary dictionary];
     _tableRec = [NSMutableDictionary dictionary];
     
-    imgNo = [[UIImageView alloc] initWithFrame:Rect((kScreenWidth-99)/2, (kScreenHeight-[CustomNaviBarView barSize].height-70)/2, 99, 70)];
+    imgNo = [[UIImageView alloc] initWithFrame:Rect((self.view.width-99)/2, (fHeight-[CustomNaviBarView barSize].height-70)/2, 99, 70)];
     [imgNo setImage:[UIImage imageNamed:@"noImage"]];
     imgNo.contentMode = UIViewContentModeScaleAspectFit;
     
     imgNo.tag = 3059;
     
-    lblNoImage = [[UILabel alloc] initWithFrame:Rect(0, imgNo.frame.origin.y+imgNo.frame.size.height+10, kScreenWidth, 20)];
+    lblNoImage = [[UILabel alloc] initWithFrame:Rect(0, imgNo.frame.origin.y+imgNo.frame.size.height+10, self.view.width, 20)];
     [lblNoImage setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
     [lblNoImage setText:XCLocalized(@"noRecording")];
     [lblNoImage setTextAlignment:NSTextAlignmentCenter];
@@ -125,12 +143,12 @@
 
 -(void)addQueryView
 {
-    _queryView = [[UIView alloc] initWithFrame:Rect(0,[CustomNaviBarView barSize].height, kScreenWidth, 48)];
+    _queryView = [[UIView alloc] initWithFrame:Rect(0,[CustomNaviBarView barSize].height, self.view.width, 48)];
 
     UILabel *label = [[UILabel alloc] initWithFrame:Rect(10,12,40,15)];
-    UILabel *lblStart = [[UILabel alloc] initWithFrame:Rect(52, 12, (kScreenWidth-150)/2, 15)];
-    UILabel *label2 = [[UILabel alloc] initWithFrame:Rect((kScreenWidth-150)/2+55, 12, 40, 15)];
-    UILabel *lblEnd = [[UILabel alloc] initWithFrame:Rect((kScreenWidth-150)/2+95, 12, (kScreenWidth-150)/2, 15)];
+    UILabel *lblStart = [[UILabel alloc] initWithFrame:Rect(52, 12, (self.view.width-150)/2, 15)];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:Rect((self.view.width-150)/2+55, 12, 40, 15)];
+    UILabel *lblEnd = [[UILabel alloc] initWithFrame:Rect((self.view.width-150)/2+95, 12, (self.view.width-150)/2, 15)];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = Rect(lblEnd.frame.origin.x+lblEnd.frame.size.width+10, 2 , 44, 44);
     [label setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
@@ -211,23 +229,7 @@
         [_tablePic setObject:array forKey:pic.strTime];
         
     }
-    
-    NSArray *aryRecord = [RecordDb queryRecordByTimeSE:lblStart.text end:lblEnd.text];
-    for (RecordModel *record in aryRecord)
-    {
-        NSString *strFormat = ([record.strStartTime componentsSeparatedByString:@" "])[0];
-        [set addObject:strFormat];
-        NSMutableArray *array = [_tableRec objectForKey:strFormat];
-        if (!array)
-        {
-            array = [NSMutableArray array];
-        }
-        [array addObject:record];
-        [_tableRec setObject:array forKey:strFormat];
-    }
-    
     [self sortDate:(NSArray*)set];
-    
     DLog(@"arySet:%@",_arySet);
     __weak ImageViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^
@@ -258,39 +260,53 @@
     {
         [_arySet addObject:[[newArray objectAtIndex:i] objectForKey:@"time"]];
     }
-    
 }
 
 -(void)updateImageList
 {
-    
-    [_arrayRecord removeAllObjects];
     [_arrayInfo removeAllObjects];
     [_arySet removeAllObjects];
     [_tablePic removeAllObjects];
     [_tableRec removeAllObjects];
-    
     [self getAllDir];
-    
 }
 -(void)initUI
 {
-    [self setNaviBarTitle:XCLocalized(@"picturesView")];
-
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setImage:[UIImage imageNamed:@"NaviBtn_Back"] forState:UIControlStateNormal];
-    [btn setImage:[UIImage imageNamed:@"NaviBtn_Back_g"] forState:UIControlStateSelected];
-    [btn addTarget:self action:@selector(navBack) forControlEvents:UIControlEventTouchUpInside];
-    [self setNaviBarLeftBtn:btn];
+    UIView *headView = [[UIView alloc] initWithFrame:Rect(0, 0, self.view.width, 64)];
+    UIImageView *imgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"top_bg"]];
+    [self.view addSubview:headView];
+    [headView addSubview:imgView];
+    imgView.frame = headView.bounds;
     
-    UIButton *btnDel = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnDel setImage:[UIImage imageNamed:@"dustbin_ico"] forState:UIControlStateNormal];
-    [btnDel setImage:[UIImage imageNamed:@"ok_ico"] forState:UIControlStateSelected];
-    [btnDel addTarget:self action:@selector(delRecord:) forControlEvents:UIControlEventTouchUpInside];
-    [self setNaviBarRightBtn:btnDel];
+    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(50, 20, self.view.width-100, 20)];
+    [lblName setText:XCLocalized(@"picturesView")];
+    [headView addSubview:lblName];
+    [lblName setFont:XCFONT(20)];
+    [lblName setTextColor:[UIColor blackColor]];
+    [lblName setTextAlignment:NSTextAlignmentCenter];
+    XCButton *btnQuery = [[XCButton alloc] initWithFrame:Rect(self.view.width-112,20, 44, 44) normal:@"his_query_h" high:@"his_query"];
+    [headView addSubview:btnQuery];
+    
+    XCButton *btnDelete = [[XCButton alloc] initWithFrame:Rect(self.view.width-60, 20, 44, 44) normal:@"his_del_h" high:@"his_del"];
+    [headView addSubview:btnDelete];
+    
+    [self.view addSubview:btnQuery];
+    [self.view addSubview:btnDelete];
 
+    [btnDelete addTarget:self action:@selector(delReocrd) forControlEvents:UIControlEventTouchUpInside];
+    [btnQuery addTarget:self action:@selector(qryRecord) forControlEvents:UIControlEventTouchUpInside];
+}
+
+-(void)delReocrd
+{
+    bDel = !bDel;
+}
+
+-(void)qryRecord
+{
     
 }
+
 
 -(void)delRecord:(UIButton*)btn
 {
@@ -336,19 +352,7 @@
         [array addObject:pic];
         [_tablePic setObject:array forKey:pic.strTime];
     }
-    NSArray *aryRecord = [RecordDb queryAllRecord];
-    for (RecordModel *record in aryRecord)
-    {
-        NSString *strFormat = ([record.strStartTime componentsSeparatedByString:@" "])[0];
-        [set addObject:strFormat];
-        NSMutableArray *array = [_tableRec objectForKey:strFormat];
-        if (!array)
-        {
-            array = [NSMutableArray array];
-        }
-        [array addObject:record];
-        [_tableRec setObject:array forKey:strFormat];
-    }
+
 
     [self sortDate:(NSArray*)set];
     DLog(@"sort:%@",_arySet);
@@ -379,19 +383,6 @@
         
     }
     
-    NSArray *aryRecord = [RecordDb queryRecordByTime:strTime];
-    for (RecordModel *record in aryRecord)
-    {
-        NSString *strFormat = ([record.strStartTime componentsSeparatedByString:@" "])[0];
-        [_arySet addObject:strFormat];
-        NSMutableArray *array = [_tableRec objectForKey:strFormat];
-        if (!array)
-        {
-            array = [NSMutableArray array];
-        }
-        [array addObject:record];
-        [_tableRec setObject:array forKey:strFormat];
-    }
     __weak ImageViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^
    {
@@ -465,7 +456,7 @@
 
     
     NSInteger nLength = nInfo+nRecord;
-    NSInteger nRow = (nLength%3 == 0) ? (nLength/3) : (nLength/3 + 1);
+    NSInteger nRow = (nLength%4 == 0) ? (nLength/4) : (nLength/4 + 1);
     return 4+nRow * 144;
 }
 
@@ -572,10 +563,7 @@
         }
         XCPhotoViewController *viewController = [[XCPhotoViewController alloc] initWithArray:imgCell.aryImage current:nStart];
         [viewController show];
-//        MJPhotoBrowser *browser = [[MJPhotoBrowser alloc] init];
-//        browser.currentPhotoIndex = nStart; // 弹出相册时显示的第一张图片是？
-//        browser.photos = imgCell.aryImage; // 设置所有的图片
-//        [browser show];
+
     }
     else
     {
@@ -595,26 +583,7 @@
 
 -(void)addRecordView:(ImageCell*)imgCell view:(UIView*)view index:(NSInteger)nIndex
 {
-    RecordModel *recordModel = [RecordDb queryRecordById:nIndex];
-    RecordView *rdView = (RecordView *)[view superview];
-    if (!bDel)
-    {
-        RecordModel *record = [RecordDb queryRecordById:nIndex];
-        PlayNetViewController *playControl = [[PlayNetViewController alloc] initWithContentPath:record parameters:nil];
-        [self presentViewController:playControl animated:YES completion:^{}];
-    }
-    else
-    {
-        if(!rdView.imgSelect.hidden)
-        {
-            [deleteRec removeObjectForKey:[[NSNumber alloc] initWithInteger:nIndex]];
-        }
-        else
-        {
-            [deleteRec setObject:recordModel forKey:[[NSNumber alloc] initWithInteger:nIndex]];
-        }
-        rdView.imgSelect.hidden = rdView.imgSelect.hidden ? NO : YES;
-    }
+
 }
 
 

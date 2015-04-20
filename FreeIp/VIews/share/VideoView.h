@@ -22,9 +22,9 @@
 
 @property (nonatomic,assign) id<VideoViewDelegate> delegate;
 @property (nonatomic,assign) NSInteger nCursel;
-@property (nonatomic,strong) UIImageView *imgView;
-
+@property (nonatomic,copy) NSString *strNO;
 //
+-(void)setRecording:(BOOL)bHidden;
 //-(void)addImage;
 //-(void)removeImage;
 @end

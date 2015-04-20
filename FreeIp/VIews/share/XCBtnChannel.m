@@ -18,4 +18,27 @@
 }
 */
 
+
+-(id)initWithFrame:(CGRect)frame  title:(NSString *)strTitle normal:(NSString *)strNorlmal
+{
+    self = [super initWithFrame:frame];
+    
+    [self setTitle:strTitle forState:UIControlStateNormal];
+    [self setImage:[UIImage imageNamed:strNorlmal] forState:UIControlStateNormal];
+    self.titleLabel.font = XCFONT(14);
+    [self setTitleColor:RGB(0, 0, 0) forState:UIControlStateNormal];
+    
+    return self;
+}
+
+-(CGRect)titleRectForContentRect:(CGRect)contentRect
+{
+    return Rect(51.5, 15, 80, 15);
+}
+
+-(CGRect)imageRectForContentRect:(CGRect)contentRect
+{
+    return Rect(10, 15, 31.5, 25);
+}
+
 @end

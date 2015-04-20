@@ -18,4 +18,11 @@
 }
 */
 
+-(id)initWithFrame:(CGRect)frame
+{
+    self= [super initWithFrame:frame];
+    [self setTextColor:RGB(100, 100, 100)];
+    [self setFont:XCFONT(16)];
+    return self;
+}
 @end

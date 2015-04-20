@@ -11,7 +11,7 @@
 
 "httpserver" = "http://www.freeip.com/";
 
-"p2pserver" = "www.freeipc.com";
+"p2pserver" = "heart.freeip.com";
 
 "offline" = "Off line";
 
@@ -204,7 +204,7 @@
 "emailBind"="The user's email is bound, unable to set";
 "email"="Email";
 "noDevice"="No device currently added";
-"deviceInfo"="The current number of device";
+"deviceInfo"="Number of devices";
 "devfresh"="Loading...";
 "releaseRefresh"="Release to refresh...";
 "pullto"="Pull to refresh...";
@@ -261,6 +261,7 @@
 "realThan64"="Name length must be less than 64";
 
 
+"channel"="Channel";
 
 
 

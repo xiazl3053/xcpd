@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PlayViewController.h"
+@interface P2PPlayViewController : PlayViewController
 
-@interface P2PPlyaViewController : UIViewController
+
+-(BOOL)captureView;
 
 @end

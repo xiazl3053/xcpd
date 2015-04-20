@@ -19,6 +19,7 @@
 
 @property (nonatomic,strong) IDecoder *decoder;
 @property (nonatomic,strong) IDecodeSource *source;
+
 @end
 
 @implementation XLDecoderServiceImpl
@@ -27,7 +28,7 @@
 {
     _source = nil;
     _decoder = nil;
-    DLog(@"释放Decoder");
+//    DLog(@"释放Decoder");
 }
 /**
  *  建立码流连接，码流的来源包含P2P方式、RTSP方式、录像方式、私有协议方式
@@ -42,7 +43,7 @@
     if (source)
     {
         _source = source;
-        BOOL bSource = [_source connection:@"test"];
+        BOOL bSource = [_source connection:source.strName];
         if (bSource)
         {
             return YES;
@@ -69,6 +70,7 @@
 //销毁
 -(void)destory
 {
+    [_decoder stopDecode];
     _decoder = nil;
     DLog(@"释放decoder");
 }
@@ -96,5 +98,18 @@
     NSArray *array = [_decoder decodeFrame];
     return array;
 }
+
+
+-(void)startRecord:(NSString *)strFile
+{
+    [_source startRecording:strFile];
+}
+
+-(void)stopRecord
+{
+    [_source stopRecording];
+}
+
+
 @end
 

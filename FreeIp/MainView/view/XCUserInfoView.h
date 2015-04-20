@@ -8,6 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol XCUserInfoViewDelegate <NSObject>
+
+-(void)userView:(int)nType;
+
+@end
+
+
 @interface XCUserInfoView : UIView
+
+@property (nonatomic,assign) id<XCUserInfoViewDelegate> delegate;
+
+-(id)initWithFrame:(CGRect)frame;
+
+-(void)setNickName:(NSString *)strNick;
+
+-(void)setImgView:(NSString *)strImg;
+
+-(void)setImageInfo:(UIImage *)image;
+
 
 @end

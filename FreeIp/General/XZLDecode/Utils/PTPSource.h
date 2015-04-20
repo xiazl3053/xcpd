@@ -9,10 +9,12 @@
 
 @interface PTPSource : IDecodeSource
 
-@property (nonatomic,assign) NSInteger nChannel;
+
 @property (nonatomic,assign) BOOL nSwitchcode;
 
--(id)initWithNO:(NSString *)strNO channel:(int)nChannel codeType:(int)nType;
+
+-(id)initWithNo:(NSString *)strNO name:(NSString*)strDevName channel:(int)nChannel codeType:(int)nType;
+
 /**
  *  建立连接
  *

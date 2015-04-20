@@ -64,7 +64,7 @@
     {
         DLog(@"open fail");
     }
-
+    [db executeUpdate:@"CREATE TABLE IF NOT EXISTS recordInfo (id integer primary key asc autoincrement,devNo text,file text,imgfile text, startTIme timestamp,endTime timestamp,allTime integer,devName text,frameNums integer,frameTimes integer)"];
     return db;
 }
 
@@ -94,6 +94,8 @@
                         [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];
@@ -116,6 +118,8 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];
@@ -137,6 +141,8 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];
@@ -158,6 +164,8 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];
@@ -180,7 +188,10 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
+        
     }
     [db close];
     return arrayTable;
@@ -201,6 +212,8 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];
@@ -222,6 +235,8 @@
                           [rs stringForColumn:@"file"],[rs stringForColumn:@"imgfile"],[rs stringForColumn:@"alltime"],
                           [rs stringForColumn:@"devName"],nil];
         RecordModel *recordModel = [[RecordModel alloc] initWithItems:array];
+        recordModel.nFramesNum = [[rs stringForColumn:@"frameNums"] integerValue];
+        recordModel.nFrameBit = [[rs stringForColumn:@"frameTimes"] integerValue];
         [arrayTable addObject:recordModel];
     }
     [db close];

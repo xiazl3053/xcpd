@@ -58,6 +58,7 @@
 + (void)show:(NSString *)status viewInfo:(UIView *)view;
 + (void)showPlayRight:(NSString *)status viewInfo:(UIView *)view;
 
+
 @property (atomic, strong) UIView *viewInfo;
 @property (atomic, strong) UIWindow *window;
 @property (atomic, strong) UIView *hud;

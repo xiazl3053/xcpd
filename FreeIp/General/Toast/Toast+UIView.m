@@ -124,17 +124,17 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     
     UIView *activityView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CSToastActivityWidth, CSToastActivityHeight)] ;
     activityView.center = [self centerPointForPosition:position withToast:activityView];
-    activityView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:CSToastOpacity];
-    activityView.alpha = 0.0;
+    activityView.backgroundColor = RGB(57,64,66);
+//    activityView.alpha = 0.0;
     activityView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
     activityView.layer.cornerRadius = CSToastCornerRadius;
     
-    if (CSToastDisplayShadow) {
-        activityView.layer.shadowColor = [UIColor blackColor].CGColor;
-        activityView.layer.shadowOpacity = CSToastShadowOpacity;
-        activityView.layer.shadowRadius = CSToastShadowRadius;
-        activityView.layer.shadowOffset = CSToastShadowOffset;
-    }
+//    if (CSToastDisplayShadow) {
+//        activityView.layer.shadowColor = [UIColor blackColor].CGColor;
+//        activityView.layer.shadowOpacity = CSToastShadowOpacity;
+//        activityView.layer.shadowRadius = CSToastShadowRadius;
+//        activityView.layer.shadowOffset = CSToastShadowOffset;
+//    }
     
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.center = CGPointMake(activityView.bounds.size.width / 2, activityView.bounds.size.height / 2);
@@ -143,9 +143,9 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     
     // associate ourselves with the activity view
     objc_setAssociatedObject (self, &CSToastActivityViewKey, activityView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    UILabel *lblInfo = [[UILabel alloc] initWithFrame:Rect(0, 0, 60, 60)];
-    [lblInfo setText:@"test"];
-    [lblInfo setTextColor:[UIColor whiteColor]];
+//    UILabel *lblInfo = [[UILabel alloc] initWithFrame:Rect(0, 0, 60, 60)];
+//    [lblInfo setText:@"test"];
+//    [lblInfo setTextColor:[UIColor whiteColor]];
     [self addSubview:activityView];
     
     [UIView animateWithDuration:CSToastFadeDuration
@@ -194,7 +194,8 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     return [self centerPointForPosition:CSToastDefaultPosition withToast:toast];
 }
 
-- (UIView *)viewForMessage:(NSString *)message title:(NSString *)title image:(UIImage *)image {
+- (UIView *)viewForMessage:(NSString *)message title:(NSString *)title image:(UIImage *)image
+{
     // sanity
     if((message == nil) && (title == nil) && (image == nil)) return nil;
 
@@ -208,12 +209,13 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
     wrapperView.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
     wrapperView.layer.cornerRadius = CSToastCornerRadius;
     
-    if (CSToastDisplayShadow) {
-        wrapperView.layer.shadowColor = [UIColor blackColor].CGColor;
-        wrapperView.layer.shadowOpacity = CSToastShadowOpacity;
-        wrapperView.layer.shadowRadius = CSToastShadowRadius;
-        wrapperView.layer.shadowOffset = CSToastShadowOffset;
-    }
+//    if (CSToastDisplayShadow)
+//    {
+//        wrapperView.layer.shadowColor = [UIColor blackColor].CGColor;
+//        wrapperView.layer.shadowOpacity = CSToastShadowOpacity;
+//        wrapperView.layer.shadowRadius = CSToastShadowRadius;
+//        wrapperView.layer.shadowOffset = CSToastShadowOffset;
+//    }
 
     wrapperView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:CSToastOpacity];
     
@@ -234,7 +236,8 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
         imageWidth = imageHeight = imageLeft = 0.0;
     }
     
-    if (title != nil) {
+    if (title != nil)
+    {
         titleLabel = [[UILabel alloc] init];
         titleLabel.numberOfLines = CSToastMaxTitleLines;
         titleLabel.font = [UIFont fontWithName:@"Helvetica" size:CSToastFontSize];

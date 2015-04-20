@@ -120,7 +120,7 @@
 +(void)load
 {
     [super load];
-    [[IQKeyboardManager sharedManager] setEnable:NO];
+    [[IQKeyboardManager sharedManager] setEnable:YES];
 }
 
 - (void)setRootViewFrFame:(CGRect)frame
@@ -258,7 +258,6 @@
 {
     //  Getting topMost ViewController.
     UIViewController *controller = [[self keyWindow] topMostController];
-    
     //  If can't get rootViewController then printing warning to user.
     if (controller == nil)  DLog(@"You must set UIWindow.rootViewController in your AppDelegate to work with IQKeyboardManager");
     
@@ -567,7 +566,7 @@
     
     //  Getting UIKeyboardSize.
     kbSize = [[[aNotification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    DLog(@"kbSize:%@",NSStringFromCGSize(kbSize));
+   // DLog(@"kbSize:%@",NSStringFromCGSize(kbSize));
     //Adding Keyboard distance from textField.
     switch ([[[self keyWindow] topMostController] interfaceOrientation])
     {
@@ -811,10 +810,9 @@
     {
         [[UIDevice currentDevice] playInputClick];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSKEY_BOARD_RETURN_VC object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSKEY_BOARD_RETURN_VC object:_textFieldView];
     
 }
-
 
 -(void)addToolbarIfRequired
 {

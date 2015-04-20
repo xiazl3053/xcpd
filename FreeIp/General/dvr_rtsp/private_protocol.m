@@ -354,8 +354,7 @@ void* private_protocol_sendHeartbeat(void *arg)
             if(count>2)
             {
                 DLog(@"private_protocol_stop");
-        //        private_protocol_stop(&pInfo);
-        //        break;
+                break;
             }
             else
             {
@@ -372,7 +371,6 @@ void* private_protocol_sendHeartbeat(void *arg)
                 if(result<0)
                 {
                      printf("Sendmsg failed!\n"); 
-                     private_protocol_stop(&pInfo);
                      break;
                 }
                 pInfo->isWaitHeartbeatReply = 1;
@@ -429,7 +427,6 @@ void* private_protocol_recvHeartbeat(void *arg)
         {
             recv(pInfo->cmdSocketFd,(void*)(buff+ARG_HEAD_LEN),pCmd->ulBufferSize,0);
         }
-        DLog(@"出问题了???");
         pInfo->isWaitHeartbeatReply = 0;
 
     }

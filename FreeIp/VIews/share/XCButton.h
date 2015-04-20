@@ -10,4 +10,14 @@
 
 @interface XCButton : UIButton
 
+
+
+
+-(id)initWithFrame:(CGRect)frame normal:(NSString *)strNor high:(NSString *)strHight;
+
+-(id)initWithFrame:(CGRect)frame normal:(NSString *)strNor;
+
+-(id)initWithFrame:(CGRect)frame normal:(NSString *)strNor high:(NSString *)strHigh select:(NSString *)strSelect;
+
+
 @end

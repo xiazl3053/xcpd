@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RecordViewController : UIViewController
+@interface RecordPlayViewController : UIViewController
+
+
+-(id)initWithItems:(NSArray*)items;
+
 
 @end

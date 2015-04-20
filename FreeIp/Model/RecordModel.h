@@ -21,6 +21,7 @@
 @property (nonatomic,strong) NSString *strEndTime;
 @property (nonatomic,strong) NSString *strFile;
 @property (nonatomic,strong) NSString *imgFile;
+@property (nonatomic,copy) NSString *strAbltFile;
 -(id)initWithItems:(NSArray*)items;
 
 @end

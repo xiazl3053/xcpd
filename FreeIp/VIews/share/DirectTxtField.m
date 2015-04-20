@@ -17,5 +17,17 @@
     // Drawing code
 }
 */
+-(id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    
+    [self setTextColor:RGB(160, 160, 160)];
+    [self setTextAlignment:NSTextAlignmentRight];
+    [self setKeyboardType:UIKeyboardTypeASCIICapable];
+    self.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.autocapitalizationType = UITextAutocapitalizationTypeNone;
+//    [self setKeyboardAppearance:UIKeyboardAppearanceDark]
+    return self;
+}
 
 @end

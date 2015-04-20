@@ -12,8 +12,6 @@
 
 @protocol RecordCellDelegate <NSObject>
 
-//-(void)realPlayRecordById:(NSInteger)nId;
-
 -(void)addPicView:(ImageCell*)imgCell view:(UIView*)view index:(NSInteger)nIndex;
 -(void)addRecordView:(ImageCell*)imgCell view:(UIView*)view index:(NSInteger)nIndex;
 
@@ -31,6 +29,8 @@
 @property (nonatomic,strong) NSMutableDictionary *aryDict;
 
 @property (nonatomic,assign) id<RecordCellDelegate> delegate;
+
+@property (nonatomic,strong) NSArray *arrayRecord;
 
 @property (nonatomic,assign) BOOL bDel;
 

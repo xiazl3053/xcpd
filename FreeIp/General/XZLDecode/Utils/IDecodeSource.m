@@ -28,4 +28,17 @@
 {
     
 }
+
+
+-(void)startRecording:(NSString *)strSource
+{
+    
+}
+
+
+-(void)stopRecording
+{
+    
+}
+
 @end

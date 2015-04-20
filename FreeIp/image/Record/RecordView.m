@@ -47,11 +47,11 @@
         [_viewInfo addSubview:_lblDev];
         [_viewInfo addSubview:_lblTime];
         
-        UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"default_play"]];
+//        UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"default_play"]];
         
-        image.frame = Rect(0, 0, 36.5, 36.5);
-        [_imgView addSubview:image];
-        image.center = CGPointMake(frame.size.width/2, 45);
+//        image.frame = Rect(0, 0, 36.5, 36.5);
+//        [_imgView addSubview:image];
+//        image.center = CGPointMake(frame.size.width/2, 45);
         
         _viewInfo.layer.borderColor = (RGB(217, 217, 217)).CGColor;
         _viewInfo.layer.borderWidth = 1.0f;

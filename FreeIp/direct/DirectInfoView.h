@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "RtspInfo.h"
 @interface DirectInfoView : UIView
+
+@property (nonatomic,strong) RtspInfo *rtsp;
+
+-(void)setDevType:(int)nType;
+
+-(BOOL)addDirect;
 
 @end

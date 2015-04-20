@@ -17,7 +17,7 @@
 
 DEFINE_SINGLETON_FOR_CLASS(CaptureService);
 
-+(UIImage *)glToUIImage:(UIView *)glView //width:(CGFloat)sourceWidth height:(CGFloat)sourceHeight
++(UIImage *)glToUIImage:(UIView *)glView
 {
     NSInteger width = glView.frame.size.width;
     NSInteger height = glView.frame.size.height;
@@ -47,7 +47,6 @@ DEFINE_SINGLETON_FOR_CLASS(CaptureService);
     
     // make the cgimage
     CGImageRef imageRef = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpaceRef, bitmapInfo, provider, NULL, NO, renderingIntent);
-    
     // then make the uiimage from that
     UIImage *myImage = [UIImage imageWithCGImage:imageRef];
     return myImage;

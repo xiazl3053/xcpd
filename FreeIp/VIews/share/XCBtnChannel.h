@@ -10,4 +10,6 @@
 
 @interface XCBtnChannel : UIButton
 
+-(id)initWithFrame:(CGRect)frame  title:(NSString *)strTitle normal:(NSString *)strNorlmal;
+
 @end

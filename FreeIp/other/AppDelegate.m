@@ -7,7 +7,12 @@
 //
 
 #import "AppDelegate.h"
-
+#import "IQKeyboardManager.h"
+#import "XCNotification.h"
+#import "LoginViewController.h"
+#import "Reachability.h"
+#import "Toast+UIView.h"
+#import "UtilsMacro.h"
 @interface AppDelegate ()
 
 @end
@@ -15,10 +20,72 @@
 @implementation AppDelegate
 
 
+//-(NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+//{
+//    return UIInterfaceOrientationMaskLandscapeRight;
+//}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [_window makeKeyAndVisible];
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE,&sa,0);
+    
+    [[IQKeyboardManager sharedManager] setEnable:YES];
+    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:YES];
+    
+    LoginViewController *loginView = [[LoginViewController alloc] init];
+    [_window setRootViewController:loginView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification
+                                               object:nil];
+    
+    hostReach = [Reachability reachabilityWithHostName:@"www.freeip.com"];
+    [hostReach startNotifier];
+    
     return YES;
 }
+
+-(void)setNetwork:(NSString*)strName
+{
+    __weak UIWindow *window = _window;
+//    if (IOS_SYSTEM_8)
+//    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [window makeToast:XCLocalized(strName)];
+        });
+//    }
+//    else
+//    {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [window makeToast:<#(NSString *)#>];
+//        });
+//    }
+}
+-(void)reachabilityChanged:(NSNotification*)note
+{
+    Reachability *curReach = [note object];
+    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
+    NetworkStatus status = [curReach currentReachabilityStatus];
+    
+    if (status == NotReachable)
+    {
+        DLog(@"网络状态:中断");
+        [self setNetwork:@"networkstatusNO"];
+
+    }
+    else if(status == ReachableViaWiFi)
+    {
+        DLog(@"网络状态:WIFI");
+        [self setNetwork:@"networkstatusWIFI"];
+    }
+    else
+    {
+        [self setNetwork:@"networkstatus3G"];
+    }
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -36,6 +103,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_BECOME_ACTIVE object:nil];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

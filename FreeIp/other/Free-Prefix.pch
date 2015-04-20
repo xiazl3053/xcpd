@@ -18,6 +18,13 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import "GlobalDefine.h"
+    #define XCLocalized(x) NSLocalizedString(x, "")
+    #define XCFONT(x) [UIFont fontWithName:@"Helvetica" size:x]
+    #define kHomeListWidth          250
+    #define kSonHomeListheight      55
+    #define kTabbarWidth            72
+    #define kUSER_INFO_MAX_LENGTH   64
+    #define kTextfieldWidth         356
 
 #endif
 
@@ -66,19 +73,66 @@
  8.DVR、NVR视频预览
  
  
+ git新上传:
+ echo "# cbh" >> README.md
+ git init
+ git add README.md
+ git commit -m "first commit"
+ git remote add origin https://github.com/xiazl3053/cbh.git
+ git push -u origin master
+
+ git remote add origin https://github.com/xiazl3053/cbh.git
+ git push -u origin master
  
+ 新建远程仓库分支
+ git branch 1.0
+ git checkout 1.0
+ git push origin 1.0
  
+ 发布版本
+ git tag
+ git tag -d Version
+ git tag add
+ git push --tag
  
+ MainView设计
+ 1.一个整体控制器
+ 2.四个小控制器
+ 3.第一个列表控制器   包含4个播放框控制器
  
+//明日工作内容：
+1.录像修改     -1
+2.bug部分:推送消息注册基于homeViewcontroller,DirectViewController
+        在 playViewController 或者  子类也不处理
+3.加入本地录像播放
+4.解码器结构调整
+5.新版本管理
+6.加入多通道播放方式
+7。修改直连设备显示信息,去掉状态，显示ip与端口集合
+8.
  
  
+ 1.多通道播放方式
+ 2.录像播放
+ 3.解码器微调
  
+ FREEIP HD待完善部分
+ 1.DVR-P2P连接           完成
+ 2.录像播放控制           完成
+ 3.选择框按钮状态设置      完成
+ 4.用户信息修改           完成
+ 5.设备名修改            完成
+ 6.游客通道              完成
+ 7.界面主色修改
+ 8.视频切换移动手势       完成
+ 9.录像效果             完成
  
  
  
  
  
  
+*/ 
  
  
  
@@ -420,7 +474,15 @@
  
  
  
- */
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 

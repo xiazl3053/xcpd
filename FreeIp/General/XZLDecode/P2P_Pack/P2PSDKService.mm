@@ -12,8 +12,8 @@
 #import <Foundation/Foundation.h>
 #import "XCNotification.h"
 #import "P2PInitService.h"
-#import "RecordModel.h"
-#import "RecordDb.h"
+//#import "RecordModel.h"
+//#import "RecordDb.h"
 using namespace std;
 
 #define HEART_SECOND   30
@@ -24,91 +24,31 @@ bool RecvFile::ProcessFrameData(char* aFrameData, int aFrameDataLength)
     {
         return YES;
     }
-//    unsigned char *unFrame = (unsigned char *)aFrameData;
-    
-//    DLog(@"%hhu--%hhu--%hhu--%hhu--%hhu--%d",unFrame[0],unFrame[1],unFrame[2],unFrame[3],unFrame[4],aFrameDataLength);
-    
-//    if (!aryData)
-//    {
-//        aryData = [NSMutableData data];
-//        [aryData appendBytes:aFrameData length:aFrameDataLength];
-//    }
-//    else
-//    {
-//        if (unFrame[0] != 0x00 || unFrame[1] != 0x00)
-//        {
-//            [aryData appendBytes:aFrameData length:aFrameDataLength];
-//            @synchronized(aryVideo)
-//            {
-//                [aryVideo addObject:aryData];
-//            }
-//        }
-//        else
-//        {
-//            @synchronized(aryVideo)
-//            {
-//                [aryVideo addObject:aryData];
-//            }
-//            aryData = nil;
-//            aryData = [NSMutableData data];
-//            [aryData appendBytes:aFrameData length:aFrameDataLength];
-//        }
-//    }
-//    if(unFrame[3] == 0x67 || unFrame[4] == 0x67)
-//    {
-//        aryData = [NSMutableData data];
-//        [aryData appendBytes:aFrameData length:aFrameDataLength];
-//    }
-//    else if(unFrame[3] == 0x61 || unFrame[4] == 0x61)
-//    {
-//        NSData *dataInfo = [NSData dataWithBytes:aFrameData length:aFrameDataLength];
-//        if(aryData)
-//        {
-//            @synchronized(aryVideo)
-//            {
-//                [aryVideo addObject:aryData];
-//            }
-//            aryData = nil;
-//        }
-//        @synchronized(aryVideo)
-//        {
-//            [aryVideo addObject:dataInfo];
-//        }
-//    }
-//    else
-//    {
-//        [aryData appendBytes:aFrameData length:aFrameDataLength];
-//    }
-    NSData *dataInfo = [NSData dataWithBytes:aFrameData length:aFrameDataLength];
-    @synchronized(aryVideo)
+    unsigned char *unFrame = (unsigned char *)aFrameData;
+    if(unFrame[3] == 0x67 || unFrame[4] == 0x67)
     {
-        [aryVideo addObject:dataInfo];
+        aryData = [NSMutableData data];
+        [aryData appendBytes:aFrameData length:aFrameDataLength];
     }
-    dataInfo = nil;
-    
-    if (bRecord)
+    else if(unFrame[3] == 0x61 || unFrame[4] == 0x61)
     {
-        if(bStart)
+        NSData *dataInfo = [NSData dataWithBytes:aFrameData length:aFrameDataLength];
+        if(aryData)
         {
-            [fileHandle seekToEndOfFile];
-            [fileHandle writeData:[[NSData alloc] initWithBytes:aFrameData length:aFrameDataLength]];
-            if( aFrameData[3]==0x67 || aFrameData[4]==0x67 || aFrameData[3]==0x61 || aFrameData[4]==0x61)
+            @synchronized(aryVideo)
             {
-                nFrameNum ++;
+                [aryVideo addObject:aryData];
             }
+            aryData = nil;
         }
-        else
+        @synchronized(aryVideo)
         {
-            if( aFrameData[3]==0x67 || aFrameData[4]==0x67 )
-            {
-                nFrameNum = 0;
-                bStart = YES;
-                DLog(@"检测到 I frame");
-                [fileHandle writeData:[[NSData alloc] initWithBytes:aFrameData length:aFrameDataLength]];
-                nFrameNum++;
-            }
+            [aryVideo addObject:dataInfo];
         }
-        
+    }
+    else
+    {
+        [aryData appendBytes:aFrameData length:aFrameDataLength];
     }
     return true;
 }
@@ -127,9 +67,11 @@ bool RecvFile::DeviceDisconnectNotify()
         StopRecv();
     }
     DLog(@"发送");
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_FAIL_VC object:XCLocalized(@"Disconnect")];
+   
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_DISCONNECT object:[NSString stringWithFormat:@"%li",(long)nChannel]];
+    DLog(@"delete:%@",strKey);
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_DISCONNECT object:strKey];
+    
     
     return true;
 }
@@ -137,7 +79,7 @@ bool RecvFile::DeviceDisconnectNotify()
 
 void RecvFile::StopRecv()
 {
-    DLog(@"结束");
+//    DLog(@"结束");
     sendheartinfoflag = NO;
     bDevDisConn = YES;
     if (conn)
@@ -183,7 +125,6 @@ void RecvFile::StopRecv()
         delete relayconn;
         relayconn = NULL;
     }
-    stopRecord(0, 0, 25);
     [aryVideo removeAllObjects];
     aryVideo = nil;
 }
@@ -515,95 +456,6 @@ BOOL RecvFile::threadTran(int nCodeType)
     return NO;
 }
 
-void RecvFile::stopRecord(CGFloat fEnd,long lFrameNumber,int nBit)
-{
-    if (!bRecord)
-    {
-        return ;
-    }
-    bRecord = NO;
- //   end = fEnd-start;
-    [fileHandle closeFile];//新加入的
-    bStart = NO;
-    BOOL success = [[NSURL fileURLWithPath:strFile] setResourceValue: [NSNumber numberWithBool: YES]
-                                                        forKey: NSURLIsExcludedFromBackupKey error:nil];
-    if(!success)
-    {
-        DLog(@"Error excluding文件");
-    }
-    NSDate *senddate=[NSDate date];
-    NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-    [dateformatter setDateFormat:@"YYYY-MM-dd HH-mm-ss"];
-    NSString *  morelocationString=[dateformatter stringFromDate:senddate];
-    DLog(@"结束时间:%@",morelocationString);
-    //在数据库中加入纪录
-    sprintf(cEnd, "%s",[morelocationString UTF8String]);
-    RecordModel *record = [[RecordModel alloc] init];
-    record.strDevNO = [NSString stringWithUTF8String:peerName.c_str()];
-    record.strStartTime = [NSString stringWithUTF8String:cStart];
-    record.strEndTime = [NSString stringWithUTF8String:cEnd];
-    record.strFile = [NSString stringWithUTF8String:cFileName];
-    record.imgFile = [NSString stringWithUTF8String:cRecordPath];
-    record.strDevName = [NSString stringWithUTF8String:cDevName];
-    NSDateFormatter *date=[[NSDateFormatter alloc] init];
-    [date setDateFormat:@"YYYY-MM-dd HH-mm-ss"];
-    record.allTime = 0;
-    DLog(@"记录:%li--P2P记录:%li",lFrameNumber,nFrameNum);
-    record.nFramesNum = nFrameNum;
-    record.nFrameBit = nBit;
-    DLog(@"fEnd:%f",end);
-    [RecordDb insertRecord:record];
-    data = nil;
-}
-void RecvFile::startRecord(CGFloat fStart,const char * cPath,const char *cRecordDevName)
-{
-    start = 0;
-    end = 0;
-//  创建文件  获取系统时间  序列号  peerName
-    NSDate *senddate=[NSDate date];
-    start = fStart;
-    DLog(@"start:%f",start);
-    //时间格式s
-    NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-    [dateformatter setDateFormat:@"YYYY-MM-dd HH-mm-ss"];
-    NSString *  morelocationString=[dateformatter stringFromDate:senddate];
-    
-    //保存文件路径
-    NSDateFormatter  *fileformatter=[[NSDateFormatter alloc] init];
-    [fileformatter setDateFormat:@"YYYYMMddHHmmss"];
-    NSString *filePath = [NSString stringWithFormat:@"%@.mp4",[fileformatter stringFromDate:senddate]];
-    
-    sprintf(cRecordPath,"%s",cPath);
-    sprintf(cDevName,"%s",cRecordDevName);
-    //创建一个目录
-    strDir = [kLibraryPath  stringByAppendingPathComponent:@"record"];
-    BOOL bFlag = YES;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:strDir isDirectory:&bFlag])
-    {
-        DLog(@"目录不存在");
-        [[NSFileManager defaultManager] createDirectoryAtPath:strDir withIntermediateDirectories:NO attributes:nil error:nil];
-        BOOL success = [[NSURL fileURLWithPath:strDir] setResourceValue: [NSNumber numberWithBool: YES]
-                                                                 forKey: NSURLIsExcludedFromBackupKey error:nil];
-        if(!success)
-        {
-            DLog(@"Error excluding不备份文件夹");
-        }
-    }
-    //视频文件保存路径
-    strFile  = [strDir stringByAppendingPathComponent:filePath];
-    //开始时间与文件名
-    sprintf(cStart, "%s",[morelocationString UTF8String]);
-    sprintf(cFileName,"%s",[filePath UTF8String]);
-    if ([[NSFileManager defaultManager] createFileAtPath:strFile contents:nil attributes:nil])
-    {
-        DLog(@"创建文件成功:%@",strFile);
-    }
-    fileHandle = [NSFileHandle fileHandleForWritingAtPath:strFile];
-    data = [[NSMutableData alloc] init];
-    bFirst = NO;
-    bRecord = YES;
-    nFrameNum=0;
-}
 BOOL RecvFile::swichCode(int nType)
 {
     //先清空之前的码流

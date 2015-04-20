@@ -10,11 +10,13 @@
 #import "XLDecoder.h"
 #import "IDecodeSource.h"
 #import "DecoderPublic.h"
+#import "P2PInitService.h"
+#import "XCNotification.h"
 
 extern "C"
 {
-#include "libavformat/avformat.h"
-#include "libswscale/swscale.h"
+    #include "libavformat/avformat.h"
+    #include "libswscale/swscale.h"
 }
 
 @interface XLDecoder()
@@ -34,29 +36,37 @@ extern "C"
 @implementation XLDecoder
 
 
--(void)dealloc
-{
-    DLog(@"GG");
-    [self closeScaler];
-    avcodec_free_frame(&pFrame);
-    avcodec_close(pCodecCtx);
-    _decodeSrc = nil;
-}
+//-(void)dealloc
+//{
+//    [self closeScaler];
+//    avcodec_free_frame(&pFrame);
+//    [[[P2PInitService sharedP2PInitService] getTheLock] lock];
+//    if(pCodecCtx)
+//    {
+//        avcodec_close(pCodecCtx);
+//    }
+//    [[[P2PInitService sharedP2PInitService] getTheLock] unlock];
+//    _decodeSrc = nil;
+//}
 
 -(id)initWithDecodeSource:(IDecodeSource *)source
 {
     self = [super initWithDecodeSource:source];
     _decodeSrc = source;
+    av_register_all();
+    avcodec_register_all();
     return self;
 }
 -(void)decoderInit
 {
     AVCodec *pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
     pCodecCtx = avcodec_alloc_context3(pCodec);
-    if(avcodec_open2(pCodecCtx,pCodec, nil))
+    [[[P2PInitService sharedP2PInitService] getTheLock] lock];
+    if(avcodec_open2(pCodecCtx,pCodec, nil)!=0)
     {
         DLog(@"error");
     }
+    [[[P2PInitService sharedP2PInitService] getTheLock] unlock];
     pFrame = avcodec_alloc_frame();
 }
 -(NSArray*)decodeFrame
@@ -66,6 +76,7 @@ extern "C"
     av_init_packet(&packet);
     int nGot;
     BOOL bFinish=NO;
+    CGFloat fStart = 0;
     while (!bFinish)
     {
         if (bStop)
@@ -74,6 +85,10 @@ extern "C"
             return result;
         }
         NSData *frameData = [_decodeSrc getNextFrame];
+        if (!pCodecCtx || !pFrame)
+        {
+            return result;
+        }
         if (frameData)
         {
             packet.size = (int)frameData.length;
@@ -102,6 +117,14 @@ extern "C"
         {
             //等待多次没有数据，直接返回
             [NSThread sleepForTimeInterval:0.03f];
+            fStart += 0.03f;
+            if (fStart>=60 && !bStop)
+            {
+                DLog(@"send Message,%@---%d",_decodeSrc.strName,_decodeSrc.nChannel);
+                NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[XCLocalized(@"Disconnect"),_decodeSrc.strName,[NSString stringWithFormat:@"%d",_decodeSrc.nChannel]] forKeys:@[@"reason",@"NO",@"channel"]];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_DISCONNECT object:dict];
+                bStop = YES;
+            }
         }
         frameData = nil;
     }
@@ -153,31 +176,6 @@ extern "C"
         return nil;
     
     KxVideoFrame *frame;
-    //
-    //    if (_videoFrameFormat == KxVideoFrameFormatYUV)
-    //    {
-    //
-    //        KxVideoFrameYUV * yuvFrame = [[KxVideoFrameYUV alloc] init];
-    //        yuvFrame.luma = copyFrameData(pVideoFrame->data[0],
-    //                                         pVideoFrame->linesize[0],
-    //                                         pVideoFrame->width,
-    //                                         pVideoFrame->height);
-    //        yuvFrame.chromaB = copyFrameData(pVideoFrame->data[1],
-    //                                            pVideoFrame->linesize[1],
-    //                                            pVideoFrame->width / 2,
-    //                                            pVideoFrame->height / 2);
-    //        yuvFrame.chromaR = copyFrameData(pVideoFrame->data[2],
-    //                                            pVideoFrame->linesize[2],
-    //                                            pVideoFrame->width / 2,
-    //                                            pVideoFrame->height / 2);
-    //        frame = yuvFrame;
-    //        memcpy(pNewVideoFrame, pVideoFrame, sizeof(AVFrame));
-    //        frame.width = pVideoFrame->width;
-    //        frame.height = pVideoFrame->height;
-    //    }
-    //    else
-    //    {
-    
     if (!_swsContext && ![self setupScaler])
     {
         DLog(@"fail setup video scaler");
@@ -197,7 +195,7 @@ extern "C"
     frame = rgbFrame;
     frame.width = pCodecCtx->width;
     frame.height = pCodecCtx->height;
-    //    }
+
     frame.duration = 1.0 / 25;
     pts += frame.duration;
     frame.position = pts;
@@ -207,6 +205,32 @@ extern "C"
 -(void)stopDecode
 {
     bStop = YES;
+    
 }
+
+-(CGFloat)getPosition
+{
+    return pts;
+}
+
+-(void)dealloc
+{
+    [self closeScaler];
+    [[[P2PInitService sharedP2PInitService] getTheLock] lock];
+    avcodec_close(pCodecCtx);
+    [[[P2PInitService sharedP2PInitService] getTheLock] unlock];
+    pCodecCtx = NULL;
+    avcodec_free_frame(&pFrame);
+    _decodeSrc = nil;
+    DLog(@"释放ffmpeg");
+    
+}
+
+
+-(void)setPosition:(CGFloat)fValue
+{
+    pts = fValue;
+}
+
 
 @end

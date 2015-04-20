@@ -10,4 +10,9 @@
 
 @interface HomeViewController : UIViewController
 
+-(void)setPlayModel;
+-(void)setDevInfo;
+
+-(void)closeAllView;
+
 @end

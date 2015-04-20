@@ -10,6 +10,12 @@
 #import <Foundation/Foundation.h>
 
 @interface IDecodeSource : NSObject
+
+@property (nonatomic,copy) NSString *strName;
+@property (nonatomic,assign) int nChannel;
+@property (nonatomic,copy) NSString *strPath;
+@property (nonatomic,copy) NSString *strKey;
+
 /**
  *  建立连接
  *
@@ -32,5 +38,11 @@
  *  资源释放
  */
 -(void)destorySource;
+
+
+-(void)startRecording:(NSString *)strSource;
+
+
+-(void)stopRecording;
 
 @end

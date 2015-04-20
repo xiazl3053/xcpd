@@ -7,7 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "RecordModel.h"
 @interface RecordingService : NSObject
+
+
+
++(BOOL)startRecordInfo:(RecordModel*)record;
+
++(BOOL)stopRecordInfo:(RecordModel *)record;
 
 @end

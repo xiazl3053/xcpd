@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "RecordModel.h"
 @interface RecordCell : UITableViewCell
+
+-(void)setRecordModel:(RecordModel *)record;
+
+
 
 @end

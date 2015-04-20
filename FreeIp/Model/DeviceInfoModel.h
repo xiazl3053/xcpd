@@ -19,6 +19,10 @@
 @property (nonatomic,strong) NSString *strDevVersion;
 @property (nonatomic,strong) NSString *strDevName;
 
+@property (nonatomic,copy) NSString *strNewType;
+
+
+
 -(id)initWithItems:(NSArray*)items;
 
 

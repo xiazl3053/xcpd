@@ -20,7 +20,6 @@
     NSMutableArray *arrayView;
     NSMutableArray *arrayPic;
 }
-@property (nonatomic,strong) NSArray *arrayRecord;
 @end
 
 @implementation ImageCell
@@ -83,14 +82,22 @@
     {
         [view removeFromSuperview];
     }
-    CGFloat width = kScreenWidth/3-2;//105
+    CGFloat fWidth;
+    if (IOS_SYSTEM_8) {
+        fWidth = kScreenSourchWidth-1-kHomeListWidth-kTabbarWidth;
+    }
+    else
+    {
+        fWidth = kScreenSourchHeight-1-kHomeListWidth-kTabbarWidth;
+    }
+    CGFloat width = fWidth/4-2;//105
     CGFloat height = 144;
     NSInteger nLength = _arrayRecord.count+_array.count;
     for (int i = 0; i<nLength; i++)
     {
         // 计算位置
-        int row = i/3;
-        int column = i%3;
+        int row = i/4;
+        int column = i%4;
         CGFloat x = 1 + column * (width+2);
         CGFloat y = 4 + row * height;//149
         if(i<_array.count)
@@ -168,10 +175,10 @@
 -(void)tapRecord:(UITapGestureRecognizer*)tap
 {
         //选择
-        if(_delegate && [_delegate respondsToSelector:@selector(addRecordView:view:index:)])
-        {
-            [_delegate addRecordView:self view:tap.view index:tap.view.tag];
-        }
+    if(_delegate && [_delegate respondsToSelector:@selector(addRecordView:view:index:)])
+    {
+        [_delegate addRecordView:self view:tap.view index:tap.view.tag];
+    }
 }
 
 - (void)tapImage:(UITapGestureRecognizer *)tap

@@ -10,4 +10,9 @@
 
 @interface PDTopview : UIView
 
+
+@property (nonatomic,strong) UIButton *btnSwitch;
+@property (nonatomic,strong) UIButton *btnSinger;
+@property (nonatomic,strong) UIButton *btnFourer;
+
 @end

@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface XCHIddenView : UIView
+@interface XCHiddenView : UIView
+
+@property (nonatomic,strong) UIScrollView *scrolView;
+
+
+-(id)initWithFrame:(CGRect)frame number:(int)nNumber;
+
+
+
 
 @end

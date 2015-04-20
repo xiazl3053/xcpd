@@ -41,8 +41,7 @@
  *  抓拍
  */
 -(void)capture;
-/**
- *  录像
- */
--(void)recording;
+
+
+-(void)startRecord:(NSString *)strFile;
 @end

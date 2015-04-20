@@ -10,4 +10,15 @@
 
 @implementation IDecoderService
 
+-(void)startRecord:(NSString *)strFile
+{
+    
+}
+-(void)capture
+{
+    
+}
+
+
+
 @end

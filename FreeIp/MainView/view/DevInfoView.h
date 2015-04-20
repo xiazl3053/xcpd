@@ -7,7 +7,32 @@
 //
 
 #import <UIKit/UIKit.h>
+@class DeviceInfoModel;
+
+
+@protocol DevNameUpdDelegate <NSObject>
+
+-(void)showUpdView;
+
+@end
 
 @interface DevInfoView : UIView
+
+@property (nonatomic,assign) id<DevNameUpdDelegate> delegate;
+
+-(void)setDeviceInfo:(DeviceInfoModel*)devInfo;
+
+@end
+
+
+
+
+@interface XCDevLabel : UILabel
+
+
+@end
+
+
+@interface XCInfoLabel : UILabel
 
 @end

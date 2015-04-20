@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "RtspInfo.h"
 @interface DirectCell : UITableViewCell
 
+
+-(void)setDeviceInfo:(RtspInfo *)devInfo;
+-(void)addLine;
 @end

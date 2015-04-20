@@ -87,7 +87,10 @@
     
     [self updateSize];
     [self setNeedsDisplay];
-    [delegate calendarView:self switchedToMonth:[currentMonth month] targetHeight:self.calendarHeight animated:NO];
+//    if(delegate && [delegate respondsToSelector:@selector(calendarView:switchedToMonth:targetHeight:animated:)])
+//    {
+//        [delegate calendarView:self switchedToMonth:[currentMonth month] targetHeight:self.calendarHeight animated:YES];
+//    }
 }
 
 #pragma mark - Next & Previous

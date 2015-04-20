@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #import <Accelerate/Accelerate.h>
-#import "KxAudioManager.h"
 using namespace std;
 
 extern "C"

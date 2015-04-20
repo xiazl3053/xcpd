@@ -2,8 +2,7 @@
 
 
 #import <Foundation/Foundation.h>
-
-
+#import "RecordModel.h"
 #import "IDecodeSource.h"
 
 @interface RecordSource : IDecodeSource
@@ -30,5 +29,8 @@
  */
 -(void)destorySource;
 
+-(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName;
+
+-(void)setUpdatePosition:(CGFloat)fValue;
 
 @end

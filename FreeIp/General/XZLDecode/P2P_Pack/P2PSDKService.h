@@ -39,7 +39,7 @@ class RecvFile : public EventHandler
 {
 public:
     RecvFile(P2PSDKClient* sdk, int type,int channel):mSdk(sdk),totalLen(0),conn(NULL),relayconn(NULL),streamType(type),nChannel(channel){bDevDisConn = NO;
-        sendheartinfoflag = YES;bExit=NO;mReciveQueue = NULL;bRecord = NULL;bFirst=NO;};
+        sendheartinfoflag = YES;bExit=NO;bFirst=NO;};
     void thread();
     virtual bool ProcessFrameData(char* aFrameData, int aFrameDataLength);
     virtual bool DeviceDisconnectNotify();
@@ -59,8 +59,6 @@ public:
     BOOL connectP2PStream(int nCodeType);
     int initTranServer();
     void deleteP2PConn();
-    void startRecord(CGFloat fStart,const char * cPath,const char *cDevName);
-    void stopRecord(CGFloat fEnd,long lFrameNumber,int nBit);
     //码流切换
     BOOL swichCode(int nType);
     int getRealType();
@@ -76,8 +74,6 @@ public:
     int nChannel;
     int nCode;
     BOOL bStart;
-    NSFileHandle * fileHandle;
-    BOOL bRecord;
     BOOL sendheartinfoflag;
     P2PSDKClient* mSdk;
     int totalLen;
@@ -105,7 +101,7 @@ public:
     dispatch_queue_t _dispath;
     BOOL bDevDisConn;
     BOOL bExit;
-    NewQueue *mReciveQueue;
+    NSString *strKey;
 };
 
 

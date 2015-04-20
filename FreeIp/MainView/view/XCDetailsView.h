@@ -8,6 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-@interface XCDetailsView : UITableViewCell
+@protocol XCDetailsDelegate <NSObject>
+
+-(void)updDetail:(int)nType;
+
+@end
+
+
+@interface XCDetailsView :  UIView
+
+@property (nonatomic,assign ) id<XCDetailsDelegate> delegate;
+
+-(void)setRealName:(NSString *)strName;
+
+
+-(void)setEmail:(NSString *)strEmail;
+
 
 @end

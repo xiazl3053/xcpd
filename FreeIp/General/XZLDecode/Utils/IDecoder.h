@@ -13,7 +13,11 @@
 -(id)initWithDecodeSource:(IDecodeSource*)source;
 
 -(void)decoderInit;
+
 -(NSArray*)decodeFrame;
+
 -(void)stopDecode;
+
+
 
 @end

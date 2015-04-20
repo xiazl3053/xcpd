@@ -7,7 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "DeviceInfoModel.h"
 @interface DeviceCell : UITableViewCell
+
+@property (nonatomic,assign) BOOL bSon;
+
+-(void)setType:(NSString*)strType;
+-(void)setDevImg:(NSString*)strImg;
+-(void)setStatusImg:(NSString*)strImg;
+-(void)setDevName:(NSString*)strDevName;
+
+-(void)setDeviceInfo:(DeviceInfoModel*)devInfo;
+
+-(void)addLine;
 
 @end

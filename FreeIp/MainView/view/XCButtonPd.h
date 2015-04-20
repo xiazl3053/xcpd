@@ -10,4 +10,7 @@
 
 @interface XCButtonPd : UIButton
 
+
+-(id)initWithTbBtn:(CGRect)frame nor:(NSString*)strNorImg high:(NSString*)strHighImg select:(NSString*)strSelectImg title:(NSString *)strTitle;
+
 @end

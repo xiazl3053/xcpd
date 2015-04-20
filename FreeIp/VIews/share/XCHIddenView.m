@@ -8,7 +8,14 @@
 
 #import "XCHIddenView.h"
 
-@implementation XCHIddenView
+#import "XCBtnChannel.h"
+
+
+#import "XCNotification.h"
+
+
+
+@implementation XCHiddenView
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -17,5 +24,34 @@
     // Drawing code
 }
 */
+
+
+
+-(id)initWithFrame:(CGRect)frame number:(int)nNumber
+{
+    self = [super initWithFrame:frame];
+    _scrolView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    [self addSubview:_scrolView];
+    
+    CGFloat fWidth = 150;
+    int i=0;
+    while(i<nNumber)
+    {
+        NSString *strTitle = [NSString stringWithFormat:@"%@ %d",XCLocalized(@"channel"),i+1];
+        XCBtnChannel *btnChannel =[[XCBtnChannel alloc] initWithFrame:Rect(50, i*kSonHomeListheight, fWidth, kSonHomeListheight) title:strTitle normal:@"smail_channel"];
+        [_scrolView addSubview:btnChannel];
+        btnChannel.tag = i;
+        [btnChannel addTarget:self action:@selector(touchChannelEvent:) forControlEvents:UIControlEventTouchUpInside];
+        i++;
+    }
+    _scrolView.contentSize = CGSizeMake(frame.size.width,nNumber*55);
+    return self;
+}
+
+
+-(void)touchChannelEvent:(UIButton *)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_CONNECT_DVR_CHANNEL_VC object:[NSNumber numberWithInteger:sender.tag]];
+}
 
 @end

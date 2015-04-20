@@ -10,4 +10,12 @@
 
 @interface PlayDownView : UIView
 
+
+@property (nonatomic,strong) UIButton *btnStop;
+@property (nonatomic,strong) UIButton *btnRecord;
+@property (nonatomic,strong) UIButton *btnCapture;
+@property (nonatomic,strong) UIButton *btnBD;
+@property (nonatomic,strong) UIButton *btnHD;
+
+
 @end

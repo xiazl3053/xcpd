@@ -70,9 +70,16 @@
     NSString *strSql = @"select * from userInfo where username = ?";
     FMDatabase *db = [LoginUserDB initDatabaseUser];
     FMResultSet *rs = [db executeQuery:strSql,strUser];
-    if (rs.next) {
-        NSString *strPwd = [NSString stringWithString:[rs stringForColumn:@"pwd"]];
-        return strPwd;
+    if (rs.next)
+    {
+        if (![[rs stringForColumn:@"pwd"] isEqualToString:@""]) {
+             NSString *strPwd = [NSString stringWithString:[rs stringForColumn:@"pwd"]];
+             return strPwd;
+        }
+        else
+        {
+            return @"";
+        }
     }
     
     

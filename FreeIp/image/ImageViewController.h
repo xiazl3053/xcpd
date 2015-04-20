@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "CustomViewController.h"
+
 #import "VRGCalendarView.h"
 
-@interface ImageViewController : CustomViewController<VRGCalendarViewDelegate>
+@interface ImageViewController : UIViewController <VRGCalendarViewDelegate>
 
 
 @end

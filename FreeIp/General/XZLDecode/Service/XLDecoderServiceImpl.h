@@ -43,4 +43,9 @@
  *  录像
  */
 -(void)recording;
+
+-(void)stopRecord;
+
+-(void)startRecord:(NSString *)strFile;
+
 @end
