@@ -810,8 +810,14 @@
     {
         [[UIDevice currentDevice] playInputClick];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSKEY_BOARD_RETURN_VC object:_textFieldView];
-    
+    if(_textFieldView.tag == 30888)
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSKEY_BOARD_RETURN_VC object:_textFieldView];
+    }
+    else
+    {
+        [_textFieldView resignFirstResponder];
+    }
 }
 
 -(void)addToolbarIfRequired

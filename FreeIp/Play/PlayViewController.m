@@ -32,6 +32,7 @@
     _strNO = strNO;
     _nChannel = nChannel;
     _strDevName = strDevName;
+    _nCodeType = nCode;
     fLongTime = 0.025;
     return  self;
 }
@@ -75,11 +76,6 @@
     _imgView.contentMode = UIViewContentModeScaleToFill;
     [_imgView setUserInteractionEnabled:YES];
     [self.view addSubview:_imgView];
-    
-//    UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchEvent:)];
-//    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panEvent:)];
-//    [_imgView addGestureRecognizer:panGesture];
-//    [_imgView addGestureRecognizer:pinchGesture];
 }
 
 -(void)panEvent:(UIPanGestureRecognizer*)sender
@@ -268,6 +264,15 @@
 -(void)setImgFrame:(CGRect)frame
 {
     self.imgView.frame = frame;
+}
+
+-(BOOL)switchCode:(int)nCode
+{
+    if (nCode ==_nCodeType) {
+        return NO;
+    }
+    
+    return NO;
 }
 
 @end

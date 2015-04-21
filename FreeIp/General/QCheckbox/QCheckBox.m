@@ -21,9 +21,8 @@
     self = [super init];
     if (self) {
         _delegate = delegate;
-        
         self.exclusiveTouch = YES;
-        [self setImage:[UIImage imageNamed:@"checkN"] forState:UIControlStateNormal];
+        [self setImage:[UIImage imageNamed:@"checkn"] forState:UIControlStateNormal];
         [self setImage:[UIImage imageNamed:@"checkY"] forState:UIControlStateSelected];
         [self addTarget:self action:@selector(checkboxBtnChecked) forControlEvents:UIControlEventTouchUpInside];
     }

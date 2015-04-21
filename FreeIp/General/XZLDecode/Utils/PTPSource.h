@@ -43,5 +43,5 @@
  */
 -(int)getSource;
 -(void)releaseDecode;
--(void)switchP2PCode:(int)nCode;
+-(BOOL)switchP2PCode:(int)nCode;
 @end

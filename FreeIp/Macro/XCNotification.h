@@ -42,4 +42,8 @@
 
 #define NS_CLOSE_PRIVATE_VC         @"NS_CLOSE_PRIVATE_VC"
 
+
+
+//发送播放器击父窗口消息
+#define NS_PLAY_VIEW_CLICK_VC @"NS_PLAY_VIEW_CLICK_VC"
 #endif

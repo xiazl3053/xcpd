@@ -205,18 +205,31 @@
     XCButton *btnQuery = [[XCButton alloc] initWithFrame:Rect(self.view.width-112,20, 44, 44) normal:@"his_query_h" high:@"his_query"];
     [headView addSubview:btnQuery];
     
-    XCButton *btnDelete = [[XCButton alloc] initWithFrame:Rect(self.view.width-60, 20, 44, 44) normal:@"his_del_h" high:@"his_del"];
+    XCButton *btnDelete = [[XCButton alloc] initWithFrame:Rect(self.view.width-60, 20, 44, 44) normal:@"his_del_h" high:@"his_del" select:@"his_ok"];
     [headView addSubview:btnDelete];
     
     [self.view addSubview:btnQuery];
     [self.view addSubview:btnDelete];
 
-    [btnDelete addTarget:self action:@selector(delReocrd) forControlEvents:UIControlEventTouchUpInside];
+    [btnDelete addTarget:self action:@selector(delReocrd:) forControlEvents:UIControlEventTouchUpInside];
     [btnQuery addTarget:self action:@selector(qryRecord) forControlEvents:UIControlEventTouchUpInside];
 }
 
--(void)delReocrd
+-(void)delReocrd:(UIButton*)btnSender
 {
+    if (btnSender.selected)
+    {
+        btnSender.selected = NO;
+        //执行删除操作
+        NSArray *aryRecord = [deleteRec allValues];
+        [RecordDb deleteRecord:aryRecord];
+        [self initData];
+    }
+    else
+    {
+        btnSender.selected = YES;
+        //执行选择删除
+    }
     bDel = !bDel;
 }
 

@@ -6,7 +6,6 @@
 //  Copyright (c) 2015年 夏钟林. All rights reserved.
 //
 
-
 #import "XLDecoder.h"
 #import "IDecodeSource.h"
 #import "DecoderPublic.h"
@@ -28,6 +27,8 @@ extern "C"
     BOOL bStop;
     AVCodecContext *pCodecCtx;
     CGFloat pts;
+    CGFloat fSrcWidth,fSrcHeight;
+    
 }
 @end
 
@@ -176,8 +177,12 @@ extern "C"
         return nil;
     
     KxVideoFrame *frame;
-    if (!_swsContext && ![self setupScaler])
+    if (fSrcWidth != pCodecCtx->width || fSrcHeight != pCodecCtx->height)
     {
+        avcodec_flush_buffers(pCodecCtx);
+        [self setupScaler];
+        fSrcWidth = pCodecCtx->width;
+        fSrcHeight = pCodecCtx->height;
         DLog(@"fail setup video scaler");
         return nil;
     }

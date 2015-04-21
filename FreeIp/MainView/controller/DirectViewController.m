@@ -233,6 +233,10 @@
     [downView.btnStop addTarget:self action:@selector(stopVideoCurent) forControlEvents:UIControlEventTouchUpInside];
     [downView.btnRecord addTarget:self action:@selector(recordingDirect:) forControlEvents:UIControlEventTouchUpInside];
     [_sonView addSubview:downView];
+    [downView.btnBD addTarget:self action:@selector(switchVideo:) forControlEvents:UIControlEventTouchUpInside];
+    [downView.btnHD addTarget:self action:@selector(switchVideo:) forControlEvents:UIControlEventTouchUpInside];
+    downView.btnBD.tag = 2;
+    downView.btnHD.tag = 1;
     [_borderLabel setFrame:((UIView*)[aryView objectAtIndex:0]).frame];
 }
 
@@ -611,7 +615,15 @@
     playView = nil;
 }
 
-
+-(void)setBtnEnableNO
+{
+    downView.btnHD.enabled = NO;
+        downView.btnBD.enabled = NO;
+        downView.btnRecord.enabled = NO;
+        downView.btnCapture.enabled = NO;
+        downView.btnStop.enabled = NO;
+    
+}
 
 #pragma mark 解析  VideoView
 -(void)clickView:(id)sender
@@ -623,6 +635,38 @@
     }
     view.layer.borderWidth = 2;
     _nIndex = view.nCursel;
+    if ([view.strNO isEqualToString:@""])
+    {
+        [self setBtnEnableNO];
+        return ;
+    }
+    PlayViewController *playControl = [_aryModel objectForKey:view.strNO];
+    if (!playControl)
+    {
+        [self setBtnEnableNO];
+        return;
+    }
+    
+    if (playControl.nCodeType)
+    {
+        downView.btnBD.enabled = NO;
+        downView.btnHD.enabled = YES;
+    }
+    else
+    {
+        downView.btnHD.enabled = NO;
+        downView.btnBD.enabled = YES;
+    }
+    downView.btnStop.enabled = YES;
+    
+    downView.btnCapture.enabled = YES;
+    if (playControl.bDecoding) {
+        downView.btnRecord.selected= YES;
+    }
+    else
+    {
+        downView.btnRecord.selected = NO;
+    }
 }
 
 -(void)doubleClickVideo:(id)sender
@@ -727,8 +771,21 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(directDisConnectView:) name:NSCONNECT_P2P_DISCONNECT object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailDirect:) name:NS_CLOSE_PRIVATE_VC object:nil];
-//    [NSNotificationCenter defaultCenter] addObserver:self selector:@selector() name: object:<#(id)#>
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clickViewForNotify:) name:NS_PLAY_VIEW_CLICK_VC object:nil];
 }
+
+-(void)clickViewForNotify:(NSNotification *)notify
+{
+    VideoView *view = (VideoView*)((PlayViewController*)notify.object).view.superview;
+    if (![view.strNO isEqualToString:@""]) {
+        __weak DirectViewController *__self = self;
+        __weak VideoView *__view = view;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [__self clickView:__view];
+        });
+    }
+}
+
 
 -(void)connectDVR:(NSNotification *)notify
 {
@@ -745,7 +802,24 @@
     );
 }
 
+-(void)switchVideo:(UIButton *)btnSender
+{
+    int nType = (int)(btnSender.tag - 1);
+    [self switchVideoInfo:nType];
+}
 
+-(void)switchVideoInfo:(int)nCode
+{
+    VideoView *video = (VideoView *)aryView[_nIndex];
+    if (![video.strNO isEqualToString:@""])
+    {
+        PlayViewController *playView = [_aryModel objectForKey:video.strNO];
+        if (playView)
+        {
+            [playView switchCode:nCode];
+        }
+    }
+}
 
 
 

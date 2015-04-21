@@ -56,7 +56,7 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     AVFormatContext *pFormatCtx;
     CGFloat _fps;
     
-    
+    int nCodeType;
     BOOL bRecord;
     NSFileHandle *fileHandle;
     NSUInteger nAllCount;
@@ -68,14 +68,15 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
 @implementation PrivateSource
 
 
--(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName
+-(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName code:(int)nCode
 {
     self = [super init];
-    
     self.strPath = strPath;
     self.strName = strDevName;
+    nCodeType = nCode;
     _fps=0;
     return self;
+   
 }
 
 -(NSString *)getIPWithHostName:(const NSString *)hostName
@@ -123,7 +124,7 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     rtspInfo.strUser = aryCode[2];
     rtspInfo.strPwd = aryCode[3];
     
-    int nResult = [self protocolInit:rtspInfo path:@"3456789" channel:[aryCode[4] intValue] code:1];
+    int nResult = [self protocolInit:rtspInfo path:@"3456789" channel:[aryCode[4] intValue] code:nCodeType];
     
     if (nResult==1)
     {
@@ -198,23 +199,6 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
 {
     av_register_all();
     avcodec_register_all();
-//    
-//    pFormatCtx = NULL;
-//    AVInputFormat* pAvinputFmt = NULL;
-//    AVIOContext		*pb = NULL;
-//    uint8_t	*buf = NULL;
-//    buf = (uint8_t*)malloc(sizeof(uint8_t)*1024);
-//    pb = avio_alloc_context(buf, 1024, 0, (__bridge void *)(_aryVideo), getVideoFrame,NULL,NULL);
-//    pAvinputFmt = av_find_input_format("H264");
-//    pFormatCtx = avformat_alloc_context();
-//    pFormatCtx->pb = pb;
-//    if(avformat_open_input(&pFormatCtx, "", pAvinputFmt, NULL) != 0 )
-//    {
-//        pFormatCtx = NULL;
-//        av_free(pb);
-//        _fps = -1;
-//        return NO;
-//    }
     DLog(@"找到视频信息");
     _fps = 25;
     return YES;
@@ -339,7 +323,10 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
 
 -(void)dealloc
 {
-    
+    if (bRecord)
+    {
+        [self stopRecording];
+    }
     @synchronized(_aryVideo)
     {
         [_aryVideo removeAllObjects];

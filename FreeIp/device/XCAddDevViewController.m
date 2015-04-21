@@ -190,6 +190,7 @@
     [_addView setTitle:XCLocalized(@"inputNO")];
     _addView.hidden = YES;
     _addView.txtField.delegate = self;
+    _addView.txtField.tag = 30888;
     _addView.delegate = self;
 }
 
@@ -395,7 +396,14 @@
 -(void)addXCDeviceInfo
 {
     //添加
-    [_addView.txtField resignFirstResponder];
+    if([_addView.txtField.text length]<13)
+    {
+        [_addView.txtField resignFirstResponder];
+    }
+    else
+    {
+        [self addBlock];
+    }
 }
 -(void)closeView
 {
@@ -407,5 +415,27 @@
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([textField.text length] >= 13 )//当字符串长度到13个的时候，只有删除按钮可以使用
+    {
+        NSString *emailRegex = @"[0-9]";//正则表达式0-9
+        NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+        BOOL bFlag = [emailTest evaluateWithObject:string];//检测字符内容
+        if(bFlag)
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+        emailTest = nil;
+        emailRegex = nil;
+    }
+    return YES;
+}
+
 
 @end

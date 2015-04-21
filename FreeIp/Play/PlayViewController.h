@@ -23,6 +23,7 @@
 @property (nonatomic,assign) int nChannel;
 @property (nonatomic,copy) NSString *strKey;
 @property (nonatomic,assign) BOOL bRecording;
+@property (nonatomic,assign) int nCodeType;
 
 -(void)startPlay;
 
@@ -36,6 +37,7 @@
 
 -(BOOL)captureView;
 
+-(BOOL)switchCode:(int)nCode;
 
 -(BOOL)recordStart;
 

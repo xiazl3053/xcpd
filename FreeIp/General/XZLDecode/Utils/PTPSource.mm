@@ -148,7 +148,6 @@
     }
     
     recv = new RecvFile(sdk,0,self.nChannel);
-//    NSMutableArray *result = [NSMutableArray array];
     return YES;
 }
 
@@ -254,28 +253,25 @@
     }
 }
 #pragma mark 码流切换
--(void)switchP2PCode:(int)nCode
+-(BOOL)switchP2PCode:(int)nCode
 {
     DLog(@"目标码流:%d",nCode);
     _nSwitchcode = NO;
-    __weak PTPSource *__weakSelf = self;
-    __block int __nCode = nCode;
     if(recv)
     {
-        dispatch_async(dispatch_get_global_queue(0, 0),
-        ^{
-            BOOL bReturn = recv->swichCode(__nCode);
-            if(bReturn)
-            {
-                __weakSelf.nSwitchcode = YES;
-            }
-            else
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NSCONNECT_P2P_FAIL_VC object:XCLocalized(@"switchError")];
-            }
-        });
+          BOOL bReturn = recv->swichCode(nCode);
+          if(bReturn)
+          {
+              _nSwitchcode = YES;
+              return YES;
+          }
+          else
+          {
+              _nSwitchcode = NO;
+              return NO;
+          }
     }
-    
+    return  NO;
 }
 #pragma mark 先一步停止P2P或者转发操作，在dealloc前调用
 -(void)releaseDecode

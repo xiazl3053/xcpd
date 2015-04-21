@@ -287,24 +287,35 @@
     XCButton *btnQuery = [[XCButton alloc] initWithFrame:Rect(self.view.width-112,20, 44, 44) normal:@"his_query_h" high:@"his_query"];
     [headView addSubview:btnQuery];
     
-    XCButton *btnDelete = [[XCButton alloc] initWithFrame:Rect(self.view.width-60, 20, 44, 44) normal:@"his_del_h" high:@"his_del"];
+    XCButton *btnDelete = [[XCButton alloc] initWithFrame:Rect(self.view.width-60, 20, 44, 44) normal:@"his_del_h" high:@"his_del" select:@"his_ok"];
     [headView addSubview:btnDelete];
     
     [self.view addSubview:btnQuery];
     [self.view addSubview:btnDelete];
 
-    [btnDelete addTarget:self action:@selector(delReocrd) forControlEvents:UIControlEventTouchUpInside];
+    [btnDelete addTarget:self action:@selector(delReocrd:) forControlEvents:UIControlEventTouchUpInside];
     [btnQuery addTarget:self action:@selector(qryRecord) forControlEvents:UIControlEventTouchUpInside];
 }
 
--(void)delReocrd
+-(void)delReocrd:(UIButton *)btnSender
 {
     bDel = !bDel;
+    if (btnSender.selected)
+    {
+        //执行删除操作
+        NSArray *aryPic = [deletePic allValues];
+        for (PictureModel *pic in aryPic)
+        {
+            [PhoneDb deleteRecordById:pic.nId];
+        }
+        [self initData];
+    }
+    btnSender.selected = !btnSender.selected;
 }
 
 -(void)qryRecord
 {
-    
+    _queryView.hidden = !_queryView.hidden;
 }
 
 

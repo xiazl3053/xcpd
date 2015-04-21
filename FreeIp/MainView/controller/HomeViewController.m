@@ -153,6 +153,10 @@
     [downView.btnStop addTarget:self action:@selector(stopVideoCurent) forControlEvents:UIControlEventTouchUpInside];
     [downView.btnRecord addTarget:self action:@selector(recordingPTP:) forControlEvents:UIControlEventTouchUpInside];
     [_sonView addSubview:downView];
+    [downView.btnBD addTarget:self action:@selector(switchBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [downView.btnHD addTarget:self action:@selector(switchBtn:) forControlEvents:UIControlEventTouchUpInside];
+    downView.btnBD.tag = 2;
+    downView.btnHD.tag = 1;
     [_borderLabel setFrame:((UIView*)[aryView objectAtIndex:0]).frame];
 }
 
@@ -713,15 +717,7 @@ NSComparator cmptr = ^(id obj1, id obj2)
     
     video.strNO = playControl.strKey;
     [dict setObject:playControl forKey:playControl.strKey];
-    
-//    __weak VideoView *__view = video;
-//    __weak P2PPlayViewController *__PlayControl = playControl;
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [__PlayControl setImgFrame:__view.frame];
-//        [__view addSubview:__PlayControl.view];
-//        
-//    });
-    
+
 }
 
 -(void)connectDVR:(NSNotification*)notify
@@ -749,12 +745,41 @@ NSComparator cmptr = ^(id obj1, id obj2)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailHome:) name:NS_CLOSE_P2P_HOME object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ptpDisConnect:) name:NSCONNECT_P2P_DISCONNECT object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playNotifyClick:) name:NS_PLAY_VIEW_CLICK_VC object:nil];
+}
+
+-(void)playNotifyClick:(NSNotification *)notify
+{
+    P2PPlayViewController *playControl = (P2PPlayViewController *) notify.object;
+    if (playControl!=nil) {
+        __weak P2PPlayViewController *__playControl = playControl;
+        __weak HomeViewController *__self = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [__self clickView:(VideoView*)__playControl.view.superview];
+        });
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+}
+
+-(void)switchBtn:(UIButton *)btnSender
+{
+    [self swithVideoInfo:(int)btnSender.tag];
+}
+
+-(void)swithVideoInfo:(int)nCode
+{
+    VideoView *video = (VideoView*)aryView[_nIndex];
+    P2PPlayViewController *playControl = [dict objectForKey:video.strNO];
+    if (!playControl) {
+        return ;
+    }
+    [playControl switchCode:nCode];
     
 }
 
@@ -775,6 +800,26 @@ NSComparator cmptr = ^(id obj1, id obj2)
     else
     {
         downView.btnRecord.selected = NO;
+    }
+    if (!playControl) {
+        downView.btnHD.enabled = NO;
+        downView.btnBD.enabled = NO;
+        downView.btnRecord.enabled = NO;
+        downView.btnCapture.enabled = NO;
+        downView.btnStop.enabled = NO;
+        return ;
+    }
+    downView.btnRecord.enabled = YES;
+    downView.btnCapture.enabled = YES;
+    downView.btnStop.enabled = YES;
+    if (playControl.nCodeType == 1) {
+        downView.btnBD.enabled = YES;
+        downView.btnHD.enabled = NO;
+    }
+    else if(playControl.nCodeType == 2 )
+    {
+        downView.btnHD.enabled = YES;
+        downView.btnBD.enabled = NO;
     }
 }
 

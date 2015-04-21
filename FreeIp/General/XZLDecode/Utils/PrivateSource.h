@@ -31,6 +31,8 @@
 -(void)destorySource;
 
 
--(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName;
+//-(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName;
+
+-(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName code:(int)nCode;
 
 @end

@@ -66,24 +66,37 @@
     ^{
          [__weakSelf.imgView makeToastActivity];
     });
+    __weak PTPSource *__ptpSource = _ptpSource;
     dispatch_async(dispatch_get_global_queue(0, 0),
     ^{
-          [__weakSelf initDecodeInfo];
+        [__weakSelf initDecodeInfo:__ptpSource];
     });
 }
 
--(void)initDecodeInfo
+-(void)initDecodeInfo:(PTPSource *)ptpsource
 {
-    BOOL bFlag = [self.decodeImp connection:_ptpSource];
+    BOOL bFlag = [self.decodeImp connection:ptpsource];
     __weak P2PPlayViewController *__weakSelf = self;
     if (bFlag)
     {
         DLog(@"连接成功?");
-        _decoder = [[XLDecoder alloc] initWithDecodeSource:_ptpSource];
         self.bPlaying= YES;
-        [self.decodeImp decoder_init:_decoder];
+        self.bDecoding = NO;
+        if(!_decoder)
+        {
+            _decoder = [[XLDecoder alloc] initWithDecodeSource:ptpsource];
+            [self.decodeImp decoder_init:_decoder];
+            //发送一次点击通知
+        }
+        else
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
+        }
         [self startPlay];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFail:) name:NSCONNECT_P2P_FAIL_VC object:nil];
+        if (_ptpSource == nil)
+        {
+            _ptpSource = ptpsource;
+        }
     }
     else
     {
@@ -93,6 +106,7 @@
               [__weakSelf.imgView hideToastActivity];
               [__weakSelf.imgView makeToast:XCLocalized(@"connectFail")];
         });
+        
         [self stopVideo];
     }
 }
@@ -107,9 +121,16 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFail:) name:NSCONNECT_P2P_FAIL_VC object:nil];
+    
+}
 -(void)connectFail:(NSNotification*)notify
 {
     NSDictionary *dict = notify.object;
@@ -165,5 +186,75 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+-(BOOL)switchCode:(int)nCode
+{
+    if (nCode == self.nCodeType) {
+        return YES;
+    }
+    self.bPlaying = NO;
+    self.bDecoding = YES;
+    //根据两种情况去判断如何切换视频码流
+    //1.如果是p2p的方式，那么使用sdk
+    //2.如果是转发的方式，那么使用重连
+    __weak P2PPlayViewController *__self = self;
+    dispatch_async(dispatch_get_main_queue(),
+       ^{
+           [__self.imgView makeToast:XCLocalized(@"videoSwitch") duration:2.0f position:@"center"];
+       });
+    
+    if([_ptpSource getSource]==1)
+    {
+        __block int __nCode = nCode;
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f*NSEC_PER_SEC)), dispatch_get_global_queue(0, 0),
+        ^{
+            BOOL bReturn = [__self.ptpSource switchP2PCode:__nCode];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ProgressHUD dismiss];
+            });
+            if (bReturn)
+            {
+                __self.nCodeType = __nCode;
+                __self.bPlaying = YES;
+                __self.bDecoding = NO;
+                dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                    [__self startPlay];
+                });
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [__self.imgView makeToast:XCLocalized(@"switchError")];
+                });
+                [__self stopVideo];
+            }
+        });
+    }
+    else
+    {
+        [_ptpSource releaseDecode];
+        _ptpSource = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ProgressHUD dismiss];
+        });
+        PTPSource *ptpSource = [[PTPSource alloc] initWithNo:self.strNO name:self.strDevName channel:self.nChannel codeType:nCode];
+        self.nCodeType = nCode;
+        _ptpSource = ptpSource;
+        __weak PTPSource *__ptpSource = _ptpSource;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            [__self initDecodeInfo:__ptpSource];
+        });
+    }
+    return YES;
+}
+
+
+
+
+
+
+
+
 
 @end
