@@ -39,11 +39,14 @@
     BOOL bFull;
     UISwipeGestureRecognizer *leftGesture;
     UISwipeGestureRecognizer *rightGesture;
+    UIPinchGestureRecognizer *pinchGesture;
+    UIPanGestureRecognizer *panGesture;
     BOOL bIsOpen;
     XCHiddenView *hiddenView;
     NSInteger nRow;
     NSInteger nSelectType;
     NSIndexPath *selectPath;
+    UIView *grayView;
 }
 @property (nonatomic,strong) DeviceViewController *devView;
 @property (nonatomic,strong) UITableView *tableView;
@@ -92,6 +95,11 @@
     UIImageView *headBack = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"top_bg"]];
     [headView addSubview:headBack];
     headBack.frame = headView.bounds;
+    
+    
+    grayView = [[UIView alloc] initWithFrame:Rect(kHomeListWidth, 0, 1, fHeight)];
+    [grayView setBackgroundColor:RGB(179, 197, 180)];
+    [self.view addSubview:grayView];
     
     UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(15,20,200,14)];
     [lblName setFont:XCFONT(14.0)];
@@ -167,6 +175,67 @@
     
     rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(switchVideo:)];
     [rightGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+    
+    pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchEvent:)];
+    
+    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panEvent:)];
+    
+}
+
+-(void)panEvent:(UIPanGestureRecognizer*)sender
+{
+    if (!bFull) {
+        return ;
+    }
+    VideoView *video = (VideoView*)sender.view;
+    P2PPlayViewController *playControl = [dict objectForKey:video.strNO];
+    if (!playControl) {
+        return ;
+    }
+    CGPoint curPoint = [sender locationInView:sender.view];
+    if ([sender state] == UIGestureRecognizerStateBegan) {
+        [playControl panStart:curPoint];
+        return ;
+    }
+    [playControl setImgPan:curPoint];
+}
+
+-(void)pinchEvent:(UIPinchGestureRecognizer*)pinchSender
+{
+    if (!bFull) {
+        return ;
+    }
+    if (pinchGesture.numberOfTouches != 2) {
+        return ;
+    }
+    VideoView *video = (VideoView*) pinchSender.view;
+    P2PPlayViewController *playControl = [dict objectForKey:video.strNO];
+    if (!playControl) {
+        return ;
+    }
+    if ([pinchSender state] == UIGestureRecognizerStateBegan) {
+        return ;
+    }
+    CGPoint p1 = [pinchSender locationOfTouch:0 inView:pinchSender.view ];
+    
+    CGPoint p2 = [pinchSender locationOfTouch:1 inView:pinchSender.view ];
+    
+    CGPoint newCenter = CGPointMake( (p1.x+p2.x)/2,(p1.y+p2.y)/2);
+    
+    
+   DLog(@"pinch-state:%f--newCenter:%f--%f",[pinchSender scale],newCenter.x,newCenter.y);
+   [playControl setImgScale:[pinchSender scale] point:newCenter];
+    if ([pinchSender state] == UIGestureRecognizerStateEnded)
+    {
+        if(playControl.imgView.width > video.width)
+        {
+            [video addGestureRecognizer:panGesture];
+        }
+        else
+        {
+            [video removeGestureRecognizer:panGesture];
+        }
+    }
 }
 
 -(void)switchVideo:(UISwipeGestureRecognizer*)sender
@@ -206,9 +275,8 @@
             
             [videoView addGestureRecognizer:leftGesture];
             [videoView addGestureRecognizer:rightGesture];
-            
+            [videoView addGestureRecognizer:pinchGesture];
             //设置当前frame位置
-            
             [self clickView:videoView];
             break;
         }
@@ -263,6 +331,7 @@
     bFull = NO;
     [self playSwitch:NO];
     
+    [panGesture.view removeGestureRecognizer:panGesture];
 }
 
 -(void)setOnlyView
@@ -284,7 +353,10 @@
     }
     [video addGestureRecognizer:leftGesture];
     [video addGestureRecognizer:rightGesture];
+    [video addGestureRecognizer:pinchGesture];
+//    [video addGestureRecognizer:panGesture];
     bFull = YES;
+    grayView.hidden = YES;
 }
 
 -(void)hiddenHomeView
@@ -324,6 +396,7 @@
         {
             [playControl setImgFrame:Rect(0, 0, width, height)];
         }
+        grayView.hidden = _tableView.hidden;
     }
     else
     {
@@ -333,6 +406,7 @@
         {
             [playControl setImgFrame:Rect(0, 0,_sonView.width-4, _sonView.height-136)];
         }
+        grayView.hidden = YES;
     }
 }
 
@@ -512,7 +586,6 @@ NSComparator cmptr = ^(id obj1, id obj2)
     return cell;
 }
 
-
 #pragma mark tableViewData source
 
 
@@ -520,11 +593,9 @@ NSComparator cmptr = ^(id obj1, id obj2)
 {
     if (bIsOpen)
     {
-        
         if (indexPath.row == nRow) {
             DeviceInfoModel *devInfo = [aryDevice objectAtIndex:nRow];
             int nCount = [devInfo.strDevType intValue]/100%10 <=2 ? ([devInfo.strDevType intValue]/100%10+1) * 4 : [devInfo.strDevType intValue]/100%10*8;
-//            DLog(@"nRow:%li",(long)nRow);
             return 82.5+55*(nCount>8?8:nCount);
         }
     }
@@ -556,6 +627,7 @@ NSComparator cmptr = ^(id obj1, id obj2)
         [_devView setDeviceInfo:devInfo];
         return ;
     }
+    //设备为DVR或者NVR类型
     if ([devInfo.strDevType intValue]>2000)
     {
         NSArray *indexPaths = nil;
@@ -583,6 +655,7 @@ NSComparator cmptr = ^(id obj1, id obj2)
         selectPath = indexPath;
         nRow = indexPath.row;
         nSelectType = 2;
+        
         [_tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
         return;
     }
@@ -621,26 +694,29 @@ NSComparator cmptr = ^(id obj1, id obj2)
     NSString *strNewKey=nil;
     if ([devInfo.strDevType intValue]<2000)
     {
-        strNewKey = devInfo.strDevNO;
+        strNewKey = devInfo.strDevNO;//如果是ipc  key-value保存设备序列号
         bIPC = YES;
     }
     else
     {
         strNewKey = [NSString stringWithFormat:@"%@_%d",devInfo.strDevNO,nDvrChannel];
+        //如果是dvr或者nvr   key-value  另外保存
     }
-    if ([video.strNO isEqualToString:strNewKey])
+    if ([video.strNO isEqualToString:strNewKey])//如果是同样的连接方式，那么不做操作
     {
         return ;
     }
+    
     if(![self checkStopVideo:video])//如果有正在播放的视频，先停止,然后检测选择的视频，是否正在播放中
     {
-         [self.view makeToast:@"正在建立P2P连接"];
+         [self.view makeToast:XCLocalized(@"connectionDevice")];
          return ;
     }
+    //查看其他视频框是否正在播放strNewKey的连接
     P2PPlayViewController *playControl = [dict objectForKey:strNewKey];
     if (playControl)
     {
-         //改变视频框
+         //改变视频框   
          [self changeVideoview:playControl video:video];
          return ;
     }
@@ -670,7 +746,8 @@ NSComparator cmptr = ^(id obj1, id obj2)
      P2PPlayViewController *playControl = [dict objectForKey:video.strNO];
      if (playControl)
      {
-         if (!playControl.bPlaying) {
+         if (!playControl.bPlaying)
+         {
              return NO;
          }
          __weak P2PPlayViewController *__playControl = playControl;
@@ -692,14 +769,20 @@ NSComparator cmptr = ^(id obj1, id obj2)
     return YES;
 }
 
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+}
+
 -(void)connectIPC:(DeviceInfoModel*)devInfo
 {
     //视频播放   创建解码  加入某一个视频框
     P2PPlayViewController *playControl = [[P2PPlayViewController alloc] initWithNO:devInfo.strDevNO name:devInfo.strDevName channel:0 code:2];
     playControl.strKey = devInfo.strDevNO;
-    [playControl setFrame:((VideoView*)aryView[_nIndex]).frame];
     playControl.nChannel = 0;
-    [aryView[_nIndex] addSubview:playControl.view];
+    [aryView[_nIndex] insertSubview:playControl.view atIndex:0];
+    [playControl setImgFrame:((VideoView*)aryView[_nIndex]).frame];
     ((VideoView*)aryView[_nIndex]).strNO = devInfo.strDevNO;
     [dict setObject:playControl forKey:devInfo.strDevNO];
 }
@@ -709,13 +792,12 @@ NSComparator cmptr = ^(id obj1, id obj2)
     P2PPlayViewController *playControl = [[P2PPlayViewController alloc] initWithNO:devInfo.strDevNO name:devInfo.strDevName channel:nChannel code:2];
     playControl.strKey = [NSString stringWithFormat:@"%@_%d",devInfo.strDevNO,nChannel];
     playControl.nChannel = nChannel;
-    
     VideoView *video = (VideoView *)aryView[_nIndex];
-    
     [playControl setFrame:video.frame];
     [video addSubview:playControl.view];
     
     video.strNO = playControl.strKey;
+    
     [dict setObject:playControl forKey:playControl.strKey];
 
 }
@@ -754,6 +836,13 @@ NSComparator cmptr = ^(id obj1, id obj2)
     if (playControl!=nil) {
         __weak P2PPlayViewController *__playControl = playControl;
         __weak HomeViewController *__self = self;
+        
+        VideoView *video = (VideoView*)playControl.view.superview;
+        VideoView *checkVideo = aryView[_nIndex];
+        if (video != checkVideo) {
+            return ;
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             [__self clickView:(VideoView*)__playControl.view.superview];
         });

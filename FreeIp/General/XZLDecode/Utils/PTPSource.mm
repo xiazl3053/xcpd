@@ -14,6 +14,7 @@
     int nconnection;
     BOOL bDestorySDK;
     BOOL bRecord;
+    BOOL bRun;
     NSFileHandle *fileHandle;
     NSUInteger nAllCount;
     RecordModel *recordModel;
@@ -21,7 +22,6 @@
 @property (nonatomic,assign) BOOL bNotify;
 @property (nonatomic,assign) int nNum;
 
-@property (nonatomic,assign) int nCodeType;
 @property (nonatomic,assign) BOOL bP2P;
 @property (nonatomic,assign) BOOL bTran;
 @end
@@ -35,23 +35,26 @@
     self = [super init];
     if (self)
     {
+        bRun = YES;
         self.strPath = strNO;
         self.nChannel = nChannel;
         self.strName = strDevName;
-        if (nChannel==0)
-        {
-            self.strKey = strNO;
-        }
-        else
-        {
-            self.strKey = [NSString stringWithFormat:@"%@_%d",strNO,nChannel];
-        }
         _nCodeType = nType;
         nconnection = 1;
         _nNum = 0;
         _bNotify = YES;
     }
     return self;
+}
+
+-(BOOL)connectTran
+{
+    BOOL bReturn = recv->threadTran(_nCodeType);
+    if (bReturn) {
+        self.bTran = YES;
+        return  YES;
+    }
+    return NO;
 }
 
 -(void)thread_gcd_PTP
@@ -146,8 +149,10 @@
     {
         return  NO;
     }
-    
-    recv = new RecvFile(sdk,0,self.nChannel);
+    if(!recv)
+    {
+        recv = new RecvFile(sdk,0,self.nChannel);
+    }
     return YES;
 }
 
@@ -195,8 +200,12 @@
         return nil;
     }
     CGFloat fTime=0;
-    while (YES)
+    while (bRun)
     {
+        if (!recv)
+        {
+            return nil;
+        }
         if(recv->aryVideo.count==0)
         {
             [NSThread sleepForTimeInterval:0.1f];
@@ -210,6 +219,7 @@
         }
         else
         {
+            if(!recv){return nil;}
             @synchronized(recv->aryVideo)
             {
                 NSData *data = [recv->aryVideo objectAtIndex:0];
@@ -280,14 +290,17 @@
     _bNotify = NO;
     if(recv)
     {
-        recv->sendheartinfoflag = NO;
-        recv->bDevDisConn = YES;
-        recv->bExit = YES;
+        DLog(@"停止");
+        recv->bDevDisConn = NO;
+        recv->bExit = NO;
+        nconnection = 1;
     }
+    
 }
 #pragma mark 销毁Decode
 -(void)dealloc
 {
+    DLog(@"释放了？");
     if(recv)
     {
         recv->StopRecv();

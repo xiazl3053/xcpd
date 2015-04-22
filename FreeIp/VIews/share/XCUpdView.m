@@ -56,7 +56,7 @@
     [self addSubview:view];
     view.tag = 10089;
     
-    _txtField = [[UITextField alloc] initWithFrame:Rect(78, 51, frame.size.width-156, 52)];
+    _txtField = [[UITextField alloc] initWithFrame:Rect(40, 51, frame.size.width-80, 52)];
     UIView *leftView = [[UIView alloc] initWithFrame:Rect(0, 0, 20, 52)];
     _txtField.leftView = leftView;
     _txtField.keyboardType = UIKeyboardTypeDefault;
@@ -71,7 +71,7 @@
     
     UIView *leftView1 = [[UIView alloc] initWithFrame:Rect(0, 0, 20,52)];
     
-    _txtNewPwd = [[UITextField alloc] initWithFrame:Rect(78, _txtField.y+_txtField.height+20, _txtField.width, _txtField.height)];
+    _txtNewPwd = [[UITextField alloc] initWithFrame:Rect(40, _txtField.y+_txtField.height+20, _txtField.width, _txtField.height)];
     [_txtNewPwd setFont:XCFONT(16)];
     _txtNewPwd.leftView = leftView1;
      _txtNewPwd.keyboardType = UIKeyboardTypeDefault;
@@ -84,7 +84,7 @@
     [_txtNewPwd setPlaceholder:XCLocalized(@"newpwd")];
     
     
-    _txtConPwd = [[UITextField alloc] initWithFrame:Rect(78, _txtNewPwd.y+_txtNewPwd.height+20, _txtField.width, _txtField.height)];
+    _txtConPwd = [[UITextField alloc] initWithFrame:Rect(40, _txtNewPwd.y+_txtNewPwd.height+20, _txtField.width, _txtField.height)];
     [_txtConPwd setFont:XCFONT(16)];
     
     UIView *leftView2 = [[UIView alloc] initWithFrame:Rect(0, 0, 20,52)];

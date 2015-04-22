@@ -9,7 +9,7 @@
 
 @interface PTPSource : IDecodeSource
 
-
+@property (nonatomic,assign) int nCodeType;
 @property (nonatomic,assign) BOOL nSwitchcode;
 
 
@@ -41,6 +41,7 @@
  *  获取码流方式
  *  @return   1是P2P,2是转发
  */
+-(BOOL)connectTran;
 -(int)getSource;
 -(void)releaseDecode;
 -(BOOL)switchP2PCode:(int)nCode;

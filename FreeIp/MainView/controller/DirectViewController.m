@@ -38,6 +38,8 @@
     UIView *_sonView;
     UILabel *_borderLabel;
     PlayDownView *downView;
+    
+    UIView *grayView;
     NSInteger _nIndex;
     DirectAddView *addView;
     BOOL bFull;
@@ -48,6 +50,10 @@
     NSInteger nSelectType;
 //    PrivatePlayViewController *privateView;
     NSMutableArray *_aryRtsp;
+    UISwipeGestureRecognizer *leftGesture;
+    UISwipeGestureRecognizer *rightGesture;
+    UIPinchGestureRecognizer *pinchGesture;
+    UIPanGestureRecognizer *panGesture;
 }
 @property (nonatomic,strong) NSMutableDictionary *aryModel;
 @property (nonatomic,strong) UITableView *tableView;
@@ -89,7 +95,7 @@
     [headView addSubview:imgBgHead];
     
     UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(17, 20, 100, 20)];
-    [lblName setFont:XCFONT(20)];
+    [lblName setFont:XCFONT(14)];
     [lblName setTextColor:RGB(100,100, 100)];
     [lblName setText:XCLocalized(@"deviceList")];
     [headView addSubview:lblName];
@@ -120,9 +126,120 @@
     
     [self updateData];
     
+    [self initGesture];
+    
     _aryModel = [NSMutableDictionary dictionary];
     
+    grayView = [[UIView alloc] initWithFrame:Rect(kHomeListWidth, 0, 1, fHeight)];
+    [self.view addSubview:grayView];
+    [grayView setBackgroundColor:RGB(179, 197, 180)];
     
+}
+-(void)initGesture
+{
+     leftGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(switchGestureEvent:)];
+    [leftGesture setDirection:UISwipeGestureRecognizerDirectionLeft];
+    
+    rightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(switchGestureEvent:)];
+    [rightGesture setDirection:UISwipeGestureRecognizerDirectionRight];
+    
+    pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchEvent:)];
+    
+    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panEvent:)];
+}
+
+-(void)panEvent:(UIPanGestureRecognizer*)sender
+{
+    if (!bFull) {
+        return ;
+    }
+    VideoView *video = (VideoView*)sender.view;
+    PlayViewController *playControl = [_aryModel objectForKey:video.strNO];
+    if (!playControl) {
+        return ;
+    }
+    CGPoint curPoint = [sender locationInView:sender.view];
+    if ([sender state] == UIGestureRecognizerStateBegan) {
+        [playControl panStart:curPoint];
+        return ;
+    }
+    [playControl setImgPan:curPoint];
+}
+
+-(void)pinchEvent:(UIPinchGestureRecognizer*)pinchSender
+{
+    if (!bFull)
+    {
+        return ;
+    }
+    VideoView *video = (VideoView*) pinchSender.view;
+    PlayViewController *playControl = [_aryModel objectForKey:video.strNO];
+    if (!playControl) {
+        return ;
+    }
+    if ([pinchSender state] == UIGestureRecognizerStateBegan) {
+        return ;
+    }
+    DLog(@"pinch-state:%f",[pinchSender scale]);
+   [playControl setImgScale:[pinchSender scale]];
+    if ([pinchSender state] == UIGestureRecognizerStateEnded)
+    {
+        if(playControl.imgView.width > video.width)
+        {
+            [video addGestureRecognizer:panGesture];
+        }
+        else
+        {
+            [video removeGestureRecognizer:panGesture];
+        }
+    }
+}
+
+-(void)switchGestureEvent:(UISwipeGestureRecognizer*)sender
+{
+    if (sender.direction==UISwipeGestureRecognizerDirectionLeft)
+    {
+        [self switchFullVideo:YES];
+    }
+    else if (sender.direction==UISwipeGestureRecognizerDirectionRight)
+    {
+        [self switchFullVideo:NO];
+    }
+}
+
+
+#pragma mark 全屏与四屏画面切换
+-(void)switchFullVideo:(BOOL)bFlag
+{
+    if(!bFull)return;
+    
+    int nTemp = bFlag ? 1 : -1;  //＋1 还是 －1的状态
+    while (YES)
+    {
+        if (_nIndex+nTemp == 4 || _nIndex+nTemp < 0)
+        {
+            break;
+        }
+        VideoView *videoView = aryView[_nIndex+nTemp];
+        PlayViewController *playControl = [_aryModel objectForKey:videoView.strNO];
+        if (playControl)
+        {
+            VideoView *videoOldView = aryView[_nIndex];
+            videoOldView.hidden = YES;
+            
+            videoView.hidden = NO;
+            [playControl setImgFrame:Rect(0,0,_sonView.width-4,_sonView.height-136)];
+            videoView.frame = Rect(0, 64, _sonView.width-4, _sonView.height-136);
+            
+            [videoView addGestureRecognizer:leftGesture];
+            [videoView addGestureRecognizer:rightGesture];
+            [videoView addGestureRecognizer:pinchGesture];
+            //设置当前frame位置
+            [self clickView:videoView];
+            break;
+        }
+        bFlag ? nTemp++ : nTemp--;
+    }
 }
 
 -(void)delDevice:(UIButton*)btnSender
@@ -298,15 +415,21 @@
         }
         ((VideoView*)aryView[i]).hidden = YES;
     }
-    ((VideoView*)aryView[_nIndex]).frame = Rect(2, 65, _sonView.width-4, _sonView.height-131);
+    VideoView *video = (VideoView*)aryView[_nIndex];
+    video.frame = Rect(2, 65, _sonView.width-4, _sonView.height-131);
     
     PlayViewController *playView = [_aryModel objectForKey:((VideoView*)aryView[_nIndex]).strNO];
     if (playView)
     {
         [playView setImgFrame:Rect(0,0,_sonView.width-4,_sonView.height-136)];
     }
-    
+    grayView.hidden = YES;
     bFull = YES;
+    //添加手势
+    [video addGestureRecognizer:leftGesture];
+    [video addGestureRecognizer:rightGesture];
+    [video addGestureRecognizer:pinchGesture];
+    
 }
 
 -(void)hiddenHomeView
@@ -345,6 +468,7 @@
         {
             [playView setImgFrame:Rect(0, 0, width, height)];
         }
+        grayView.hidden = _tableView.hidden;
     }
     else
     {
@@ -354,6 +478,7 @@
         {
             [playViewCon setImgFrame:Rect(0, 0,_sonView.width-4, _sonView.height-136)];
         }
+        grayView.hidden = YES;
     }
 }
 
@@ -478,7 +603,7 @@
 -(BOOL)changeVideoView:(NSString *)strPath
 {
     PlayViewController *playView = [_aryModel objectForKey:strPath];
-    if (!playView)//如果没有不替换
+    if(!playView)
     {
         return NO;
     }
@@ -497,6 +622,33 @@
     [self startPlay:rtspInfo channel:0];
 }
 
+-(BOOL)checkStopVideo:(VideoView *)video
+{
+     PlayViewController *playControl = [_aryModel objectForKey:video.strNO];
+     if (playControl)
+     {
+         if (!playControl.bPlaying)
+         {
+             return NO;
+         }
+         __weak PlayViewController *__playControl = playControl;
+        dispatch_group_t group = dispatch_group_create();
+        dispatch_group_async(group,dispatch_get_global_queue(0, 0),
+         ^{
+             [__playControl stopPlay];
+         });
+        for (UIView *view in video.subviews)
+        {
+             [view removeFromSuperview];
+        }
+        dispatch_group_wait(group,DISPATCH_TIME_FOREVER);
+        DLog(@"删除:%@",playControl.strKey);
+        
+        [_aryModel removeObjectForKey:playControl.strKey];
+        playControl = nil;
+     }
+    return YES;
+}
 
 -(void)startPlay:(RtspInfo*)rtspInfo channel:(int)nChannel
 {
@@ -506,12 +658,13 @@
     {
         strPath = [NSString stringWithFormat:@"%@@%d@%@@%@@%d",rtspInfo.strAddress,(int)rtspInfo.nPort,rtspInfo.strUser,rtspInfo.strPwd,nChannel];
 
-        if([self changeVideoView:strPath])
-        {
-            //执行替换视频动作
-            return ;
-        }
-        playViewController = [[PrivatePlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
+//        if([self changeVideoView:strPath])
+//        {
+//            //执行替换视频动作
+//            [aryView[_nIndex] makeToast:@"当前视频框正在建立连接"];
+//            return ;
+//        }
+//        playViewController = [[PrivatePlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
     }
     else
     {
@@ -523,14 +676,48 @@
         else
         {
             strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/%d1",strAdmin,rtspInfo.strAddress,(int)rtspInfo.nPort,nChannel];
-            
         }
-        DLog(@"strPath:%@",strPath);
-        if([self changeVideoView:strPath])
-        {
-            return ;
-        }
+//        DLog(@"strPath:%@",strPath);
+//        if([self changeVideoView:strPath])
+//        {
+//            [aryView[_nIndex] makeToast:@"当前视频正在建立连接"];
+//            return ;
+//        }
+//        playViewController = [[RTSPPlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
+//        rtspInfo.nRequest = nChannel;
+//        playViewController.rtsp = rtspInfo;
+    }
+    DLog(@"请求:%@",strPath);
+    
+    //先检测当前视频框状态
+    VideoView *curVideo = aryView[_nIndex];
+    if ([curVideo.strNO isEqualToString:strPath]) {
+        //如果是一致的，视频不做变化
+        return ;
+    }
+    DLog(@"curVideo:%@",curVideo.strNO);
+       //如果当前通道正在播放其他视频,停止
+    if (![self checkStopVideo:curVideo])
+    {
+        DLog(@"curVideo:%@",curVideo.strNO);
+        [curVideo makeToast:@"当前视频框正在建立连接"];
+        return ;
+    }
+    
+    //如果请求的设备，在其他视频框中播放
+    if ([self changeVideoView:strPath])
+    {
+        return ;
+    }
+    //通过不同方式播放视频
+    if ([rtspInfo.strType isEqualToString:@"DVR"]) {
+        playViewController = [[PrivatePlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
+    }
+    else
+    {
         playViewController = [[RTSPPlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
+        rtspInfo.nRequest = nChannel;
+        playViewController.rtsp = rtspInfo;
     }
     playViewController.strKey = strPath;
     [playViewController setFrame:((VideoView*)aryView[_nIndex]).frame];
@@ -545,20 +732,22 @@
 {
     NSString *strKey = notify.object;
     PlayViewController *playView = [_aryModel objectForKey:strKey];
-     if (!playView) {
+     if (!playView)
+     {
         return ;
     }
     VideoView *video = (VideoView*)playView.view.superview;
+    video.strNO = nil; // 关闭STRNO
     __weak PlayViewController *__playView = playView;
     dispatch_async(dispatch_get_main_queue(), ^{
         [__playView.view removeFromSuperview];
     });
     __weak VideoView *__view = video;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
         [__view makeToast:XCLocalized(@"connectFail") duration:1.5 position:@"center"];
     });
     [_aryModel removeObjectForKey:strKey];
-    
 }
 
 #pragma mark 丢失连接
@@ -571,20 +760,23 @@
     }
     __weak PlayViewController *__playView = playView;
     VideoView *video = (VideoView*)playView.view.superview;
+    video.strNO = nil; //干掉strPath
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_async(group, dispatch_get_main_queue(),^{
-        [__playView stopPlay];
+        [__playView stopPlay];//销毁解码器操作
     });
     dispatch_async(dispatch_get_main_queue(), ^{
         [__playView.view removeFromSuperview];
     });
     __weak VideoView *__view = video;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [__view makeToast:XCLocalized(@"DisConnect") duration:1.5 position:@"center"];
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        [__view makeToast:XCLocalized(@"Disconnect")];
     });
+    DLog(@"中断链接:%@",strKey);
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
     [_aryModel removeObjectForKey:strKey];
-    
+     
     
 }
 
@@ -618,10 +810,10 @@
 -(void)setBtnEnableNO
 {
     downView.btnHD.enabled = NO;
-        downView.btnBD.enabled = NO;
-        downView.btnRecord.enabled = NO;
-        downView.btnCapture.enabled = NO;
-        downView.btnStop.enabled = NO;
+    downView.btnBD.enabled = NO;
+    downView.btnRecord.enabled = NO;
+    downView.btnCapture.enabled = NO;
+    downView.btnStop.enabled = NO;
     
 }
 
@@ -658,9 +850,9 @@
         downView.btnBD.enabled = YES;
     }
     downView.btnStop.enabled = YES;
-    
+    downView.btnRecord.enabled = YES;
     downView.btnCapture.enabled = YES;
-    if (playControl.bDecoding) {
+    if (playControl.bRecording) {
         downView.btnRecord.selected= YES;
     }
     else
@@ -730,9 +922,10 @@
             [__model stopPlay];
         });
         dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-        DLog(@"删除");
-        [_aryModel removeObjectForKey:model.strNO];
+        DLog(@"删除Video:%@",video.strNO);
+        [_aryModel removeObjectForKey:video.strNO];
         model = nil;
+        video.strNO = nil;
     }
 }
 -(void)closeAllView
@@ -740,6 +933,8 @@
     for (PlayViewController *model in [_aryModel allValues])
     {
         __weak PlayViewController *__model = model;
+        VideoView *video = (VideoView*)model.view.superview;
+        video.strNO = nil;
         dispatch_async(dispatch_get_main_queue(),
         ^{
              [__model.view removeFromSuperview];
@@ -756,7 +951,7 @@
 
 }
 
-#pragma mark 去掉
+#pragma mark 关闭通知，关闭所有播放的
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -780,6 +975,10 @@
     if (![view.strNO isEqualToString:@""]) {
         __weak DirectViewController *__self = self;
         __weak VideoView *__view = view;
+        VideoView *checkVideo = aryView[_nIndex];
+        if (view != checkVideo) {
+            return ;
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [__self clickView:__view];
         });

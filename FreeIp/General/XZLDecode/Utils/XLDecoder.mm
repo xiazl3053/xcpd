@@ -68,6 +68,7 @@ extern "C"
         DLog(@"error");
     }
     [[[P2PInitService sharedP2PInitService] getTheLock] unlock];
+    
     pFrame = avcodec_alloc_frame();
 }
 -(NSArray*)decodeFrame
@@ -96,6 +97,7 @@ extern "C"
             unsigned char* pub = (unsigned char*)malloc(frameData.length);
             memcpy(pub,[frameData bytes],frameData.length);
             packet.data = pub;
+            
             int nTemp = avcodec_decode_video2(pCodecCtx,pFrame,&nGot,&packet);
             if (nGot)
             {
@@ -111,6 +113,11 @@ extern "C"
                     frameData = nil;
                     continue;
                 }
+            }
+            else
+            {
+                free(pub);
+                return result;
             }
             free(pub);
         }
@@ -179,6 +186,7 @@ extern "C"
     KxVideoFrame *frame;
     if (fSrcWidth != pCodecCtx->width || fSrcHeight != pCodecCtx->height)
     {
+        DLog(@"111111 reset!");
         avcodec_flush_buffers(pCodecCtx);
         [self setupScaler];
         fSrcWidth = pCodecCtx->width;
@@ -228,9 +236,7 @@ extern "C"
     avcodec_free_frame(&pFrame);
     _decodeSrc = nil;
     DLog(@"释放ffmpeg");
-    
 }
-
 
 -(void)setPosition:(CGFloat)fValue
 {

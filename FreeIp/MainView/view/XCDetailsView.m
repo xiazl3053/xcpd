@@ -36,11 +36,11 @@
     int ntype = 0;
     if(point.y<50)
     {
-        ntype = 4;
+        ntype = 5;
     }
     else if(point.y>50)
     {
-        ntype = 5;
+        ntype = 4;
     }
     if(_delegate && [_delegate respondsToSelector:@selector(updDetail:)])
     {

@@ -88,10 +88,7 @@
             [self.decodeImp decoder_init:_decoder];
             //发送一次点击通知
         }
-        else
-        {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
         [self startPlay];
         if (_ptpSource == nil)
         {
@@ -171,6 +168,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_P2P_HOME object:self];
 }
 
+-(void)setStrKey:(NSString *)strKey
+{
+    [super setStrKey:strKey];
+    _ptpSource.strKey = self.strKey;
+}
 
 -(BOOL)captureView
 {
@@ -234,27 +236,37 @@
     else
     {
         [_ptpSource releaseDecode];
+        [_decoder stopDecode];
         _ptpSource = nil;
+        _decoder = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             [ProgressHUD dismiss];
         });
         PTPSource *ptpSource = [[PTPSource alloc] initWithNo:self.strNO name:self.strDevName channel:self.nChannel codeType:nCode];
-        self.nCodeType = nCode;
         _ptpSource = ptpSource;
-        __weak PTPSource *__ptpSource = _ptpSource;
+        self.nCodeType = nCode;
+        _ptpSource.nCodeType = nCode;
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            [__self initDecodeInfo:__ptpSource];
+            [__self initDecodeInfo:__self.ptpSource];
+        
         });
     }
     return YES;
 }
 
-
-
-
-
-
-
-
+-(void)switchTran
+{
+    BOOL bReturn = [_ptpSource connectTran];
+    if (bReturn) {
+        self.bPlaying =YES;
+        self.bDecoding = NO;
+        [self startPlay];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
+    }
+    else
+    {
+        [self stopVideo];
+    }
+}
 
 @end

@@ -10,6 +10,8 @@
 #import "XLDecoderServiceImpl.h"
 #import "RecordModel.h"
 
+#import "RtspInfo.h"
+
 @interface PlayViewController : UIViewController
 
 @property (nonatomic,assign) CGRect frame;
@@ -24,6 +26,8 @@
 @property (nonatomic,copy) NSString *strKey;
 @property (nonatomic,assign) BOOL bRecording;
 @property (nonatomic,assign) int nCodeType;
+@property (nonatomic,assign) RtspInfo *rtsp;
+
 
 -(void)startPlay;
 
@@ -42,5 +46,15 @@
 -(BOOL)recordStart;
 
 -(BOOL)recordStop;
+
 -(void)setImgFrame:(CGRect)frame;
+
+-(void)setImgScale:(CGFloat)fScale;
+
+-(void)panStart:(CGPoint)curPoint;
+
+-(void)setImgPan:(CGPoint)curPoint;
+
+-(void)setImgScale:(CGFloat)fScale point:(CGPoint)curPoint;
+
 @end

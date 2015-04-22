@@ -46,6 +46,7 @@
     UpdRealService *_updRealService;
     UpdNickService *_updNickService;
     UpdEmailService *_emailServer;
+    UIView *grayView;
 }
 @property (nonatomic,strong) UserAllInfoModel *userAll;
 @property (nonatomic,strong) UITableView *tableview;
@@ -59,7 +60,13 @@
 
 -(void)initUpdView
 {
-    updView = [[XCUpdView alloc] initWithFrame:Rect(100,self.view.height/2-200, self.view.width-200, 400)];
+    grayView = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:grayView];
+    [grayView setBackgroundColor:RGB(128, 128, 128)];
+    grayView.alpha = 0.9;
+    grayView.hidden = YES;
+    
+    updView = [[XCUpdView alloc] initWithFrame:Rect(self.view.width/2-200,self.view.height/2-250, 400, 500)];
     [updView setTitle:XCLocalized(@"Modify")];
     [updView.txtField setPlaceholder:XCLocalized(@"cameraName")];
     [self.view addSubview:updView];
@@ -68,13 +75,22 @@
 }
 -(void)updDetail:(int)nType
 {
-    if(nType==4)
+    __weak MoreViewController *__self = self;
+    __weak XCUpdView *__updView = updView;
+    nUpdType = nType;
+    if(nType==5)
     {
-        [self updateRealName];
+         dispatch_async(dispatch_get_main_queue(), ^{
+              [__self setUpdView:XCLocalized(@"updateReal") place:XCLocalized(@"realThan64")];
+              [__updView closePassword];
+         });
     }
     else
     {
-        [self updateEmail];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [__self setUpdView:XCLocalized(@"updateEmail") place:XCLocalized(@"regUser")];
+            [__updView closePassword];
+        });
     }
 }
 
@@ -218,6 +234,7 @@
         __weak MoreViewController *__weakSelf = self;
         __weak XCUpdView *__updView = updView;
         __weak XCDetailsView *__detailView = _detailsView;
+        __weak UIView *__weakView = grayView;
         _emailServer.httpBlock = ^(int nStatus)
         {
             dispatch_async(dispatch_get_main_queue(), ^{[ProgressHUD dismiss];});
@@ -225,6 +242,7 @@
                 case 1:
                 {
                     [__weakSelf.view makeToast:XCLocalized(@"updateOK")];
+                    __weakView.hidden = YES;
                     __updView.hidden = YES;
                     [__detailView setEmail:__updView.txtField.text];
                 }
@@ -272,6 +290,7 @@
         __weak XCUserInfoView *__userInfoView = _userInfoView;
         __block NSString *__strOnlyName = strEmail;
         __weak XCUpdView *__updView = updView;
+        __weak UIView *__weakView = grayView;
         _updNickService.httpBlock = ^(int nStatus)
         {
             dispatch_async(dispatch_get_main_queue(),
@@ -284,7 +303,9 @@
                 {
                     [__weakSelf.view makeToast:XCLocalized(@"updateOK")];
                     __weakSelf.userAll.strOnlyName = __strOnlyName;
+                    
                     [__userInfoView setNickName:__strOnlyName];
+                    __weakView.hidden = YES;
                     __updView.hidden = YES;
                 }
                 break;
@@ -357,6 +378,7 @@
                        ^{
                            [ProgressHUD show:XCLocalized(@"updpwding")];
                        });
+        __weak UIView *__grayView = grayView;
         __weak MoreViewController *__weakSelf = self;
         _updService.httpBlock = ^(int nStatus)
         {
@@ -370,8 +392,8 @@
                     [LoginUserDB addLoginUser:user];
                     DLog(@"更改数据库记录");
                     [UserInfo sharedUserInfo].strPwd = __strNewPwd;
-                    
                     dispatch_async(dispatch_get_main_queue(), ^{
+                        __grayView.hidden = YES;
                         __updView.hidden = YES;
                     });
                 }
@@ -395,6 +417,7 @@
 
 -(void)closeView
 {
+    grayView.hidden = YES;
     updView.hidden = YES;
 }
 
@@ -402,6 +425,7 @@
 {
     [updView setTitle:strTitle];
     [updView.txtField setPlaceholder:strPlace];
+    grayView.hidden = NO;
     updView.hidden = NO;
 }
 
@@ -466,7 +490,7 @@
     
     btnLogout = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnLogout setTitle:XCLocalized(@"logout") forState:UIControlStateNormal];
-    [btnLogout setBackgroundColor:RGB(15, 173, 225)];
+    [btnLogout setBackgroundColor:RGB(234,98,84)];
     [_sonView addSubview:btnLogout];
     btnLogout.frame = Rect(50,450, _sonView.width-100, 50);
     [btnLogout addTarget:self action:@selector(showLogoutAlert) forControlEvents:UIControlEventTouchUpInside];

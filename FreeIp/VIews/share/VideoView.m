@@ -30,7 +30,7 @@
         _doubleGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleClickView)];
         _tapGesture.numberOfTapsRequired =1;
         _doubleGesture.numberOfTapsRequired = 2;
-
+        self.clipsToBounds = YES;
         [self setUserInteractionEnabled:YES];
         [self addGestureRecognizer:_tapGesture];
         [self addGestureRecognizer:_doubleGesture];

@@ -9,9 +9,12 @@
 #import "PlayViewController.h"
 #import "DecoderPublic.h"
 #import "UIView+Extension.h"
+#import "UIView+Extension.h"
 #import "UtilsMacro.h"
 #import "Toast+UIView.h"
 #import "CaptureService.h"
+
+#define kScaleMax 4.0
 
 @interface PlayViewController ()
 {
@@ -19,6 +22,7 @@
     CGFloat fWidth,fHeight;
     BOOL bFlag;
     CGFloat fLongTime;
+    CGFloat fSrcWidth,fSrcHeight;
 }
 
 @end
@@ -34,6 +38,7 @@
     _strDevName = strDevName;
     _nCodeType = nCode;
     fLongTime = 0.025;
+    
     return  self;
 }
 
@@ -56,11 +61,11 @@
     _strDevName = record.strDevName;
     return self;
 }
-
--(void)setFrame:(CGRect)frame
-{
-    _frame = frame;
-}
+//
+//-(void)setFrame:(CGRect)frame
+//{
+//    _frame = frame;
+//}
 
 //-(void)loadView
 //{
@@ -75,7 +80,7 @@
     _imgView = [[UIImageView alloc] initWithFrame:Rect(0, 0, _frame.size.width, _frame.size.height)];
     _imgView.contentMode = UIViewContentModeScaleToFill;
     [_imgView setUserInteractionEnabled:YES];
-    [self.view addSubview:_imgView];
+    [self.view insertSubview:_imgView atIndex:0];
 }
 
 -(void)panEvent:(UIPanGestureRecognizer*)sender
@@ -263,7 +268,10 @@
 
 -(void)setImgFrame:(CGRect)frame
 {
-    self.imgView.frame = frame;
+    self.imgView.frame = Rect(0, 0, frame.size.width, frame.size.height);
+    fSrcWidth = frame.size.width;
+    fSrcHeight = frame.size.height;
+    
 }
 
 -(BOOL)switchCode:(int)nCode
@@ -274,6 +282,86 @@
     
     return NO;
 }
+//
+//-(void)setImgScale:(CGFloat)fScale
+//{
+//    CGFloat glWidth = self.view.width;
+//    CGFloat glHeight = self.view.height;
+//    
+//    if (self.view.width * fScale <= fSrcWidth) {
+//        self.view.frame = Rect(0, 0, fSrcWidth, fSrcHeight);
+//    }
+//    else
+//    {
+//        CGFloat nowWidth = glWidth * fScale > fSrcWidth * kScaleMax ? fSrcWidth * kScaleMax : glWidth * fScale ;
+//        
+//        CGFloat nowHeight = glHeight * fScale > fSrcHeight * kScaleMax ? fSrcHeight * kScaleMax : glHeight * fScale ;
+//        
+//        self.view.frame = Rect(fSrcWidth/2-nowWidth/2, fSrcHeight/2-nowHeight/2, nowWidth, nowHeight);
+//    }
+//    
+//}
+//
+-(void)setImgScale:(CGFloat)fScale
+{
+    CGFloat glWidth = _imgView.width;
+    CGFloat glHeight = _imgView.height;
+    
+    if (_imgView.width * fScale <= fSrcWidth) {
+        _imgView.frame = Rect(0, 0, fSrcWidth, fSrcHeight);
+    }
+    else
+    {
+        CGFloat nowWidth = glWidth * fScale > fSrcWidth * kScaleMax ? fSrcWidth * kScaleMax : glWidth * fScale ;
+        
+        CGFloat nowHeight = glHeight * fScale > fSrcHeight * kScaleMax ? fSrcHeight * kScaleMax : glHeight * fScale ;
+        
+        _imgView.frame = Rect(fSrcWidth/2-nowWidth/2, fSrcHeight/2-nowHeight/2, nowWidth, nowHeight);
+    }
+    
+}
+
+-(void)setImgScale:(CGFloat)fScale point:(CGPoint)curPoint
+{
+    CGFloat glWidth = _imgView.width;
+    CGFloat glHeight = _imgView.height;
+    
+    if (_imgView.width * fScale <= fSrcWidth) {
+        _imgView.frame = Rect(0, 0, fSrcWidth, fSrcHeight);
+    }
+    else
+    {
+        CGFloat fOrgX,fOrgY;
+       
+        
+        fOrgX = curPoint.x - fSrcWidth/2;
+        fOrgY = curPoint.y - fSrcHeight/2;
+        
+        
+        CGFloat nowWidth = glWidth * fScale > fSrcWidth * kScaleMax ? fSrcWidth * kScaleMax : glWidth * fScale ;
+        
+        CGFloat nowHeight = glHeight * fScale > fSrcHeight * kScaleMax ? fSrcHeight * kScaleMax : glHeight * fScale ;
+        
+        _imgView.frame = Rect(fOrgX>0 ? (0-fOrgX) : fOrgX, fOrgY >0 ? ( 0-fOrgY) : fOrgY, nowWidth, nowHeight);
+    }
+    
+}
+
+-(void)panStart:(CGPoint)curPoint
+{
+    lastX = curPoint.x;
+    lastY = curPoint.y;
+}
+
+-(void)setImgPan:(CGPoint)curPoint
+{
+    CGFloat frameX = (_imgView.x + (curPoint.x-lastX)) > 0 ? 0 : (abs(_imgView.x+(curPoint.x-lastX))+fSrcWidth >= _imgView.width ? -(_imgView.width-fSrcWidth) : (_imgView.x+(curPoint.x-lastX)));
+    CGFloat frameY =(_imgView.y + (curPoint.y-lastY))>0?0: (abs(_imgView.y+(curPoint.y-lastY))+fSrcHeight >= _imgView.height ? -(_imgView.height-fSrcHeight) : (_imgView.y+(curPoint.y-lastY)));
+    _imgView.frame = Rect(frameX,frameY , _imgView.width, _imgView.height);
+    lastX = curPoint.x;
+    lastY = curPoint.y;
+}
+
 
 @end
 

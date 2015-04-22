@@ -21,6 +21,7 @@
 @property (nonatomic,assign) NSInteger nChannel;
 @property (nonatomic,assign) NSInteger nRow;
 
+@property (nonatomic,assign) int nRequest;
 -(id)initWithItems:(NSArray*)items;
 
 @end

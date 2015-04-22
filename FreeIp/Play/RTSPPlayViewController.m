@@ -30,6 +30,8 @@
     
     self.strNO = strPath;
     self.strDevName = strDevName;
+    self.nCodeType = 1;
+    
     return self;
 }
 -(void)setStrKey:(NSString *)strKey
@@ -85,9 +87,12 @@
     });
     if(bFlag)
     {
-        _decoder = [[XLDecoder alloc] initWithDecodeSource:_rtspSrc];
+        if(_decoder==nil)
+        {
+            _decoder = [[XLDecoder alloc] initWithDecodeSource:_rtspSrc];
+            [self.decodeImp decoder_init:_decoder];
+         }
         self.bPlaying = YES;
-        [self.decodeImp decoder_init:_decoder];
         [self startPlay];
     }
     else
@@ -109,6 +114,43 @@
      
     return YES;
 }
+
+
+-(BOOL)switchCode:(int)nCode
+{
+    if (self.nCodeType == nCode) {
+        return YES;
+    }
+    self.bPlaying = NO;
+    self.bDecoding = YES;
+    __weak RTSPPlayViewController *__self = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [__self.imgView makeToast:XCLocalized(@"videoSwitch")];
+    });
+    _rtspSrc = nil;
+    NSString *strPath = nil;
+    NSString *strAdmin = [@"" isEqualToString:self.rtsp.strUser] ? @"" : [NSString stringWithFormat:@"%@:%@@",self.rtsp.strUser,self.rtsp.strUser];
+    if ([self.rtsp.strType isEqualToString:@"IPC"])
+    {
+        strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/%d",strAdmin,self.rtsp.strAddress,(int)self.rtsp.nPort,nCode];
+    }
+    else
+    {
+        strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/%d%d",strAdmin,self.rtsp.strAddress,(int)self.rtsp.nPort,self.rtsp.nRequest,nCode];
+    }
+    DLog(@"strPath:%@",strPath);
+    RTSPSource *privateSrc = [[RTSPSource alloc] initWithPath:strPath devName:self.strDevName];
+    privateSrc.strKey = self.strKey;
+    self.bDecoding = NO;
+    _rtspSrc = privateSrc;
+    self.nCodeType = nCode;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [__self initDecodeInfo];
+    });
+    
+    return YES;
+}
+
 
 
 /*

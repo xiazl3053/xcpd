@@ -24,32 +24,37 @@ bool RecvFile::ProcessFrameData(char* aFrameData, int aFrameDataLength)
     {
         return YES;
     }
-    unsigned char *unFrame = (unsigned char *)aFrameData;
-    if(unFrame[3] == 0x67 || unFrame[4] == 0x67)
+//    DLog(@"4:%hhu--length:%d",aFrameData[4],aFrameDataLength);
+    @synchronized(aryVideo)
     {
-        aryData = [NSMutableData data];
-        [aryData appendBytes:aFrameData length:aFrameDataLength];
+        [aryVideo addObject:[NSData dataWithBytes:aFrameData length:aFrameDataLength]];
     }
-    else if(unFrame[3] == 0x61 || unFrame[4] == 0x61)
-    {
-        NSData *dataInfo = [NSData dataWithBytes:aFrameData length:aFrameDataLength];
-        if(aryData)
-        {
-            @synchronized(aryVideo)
-            {
-                [aryVideo addObject:aryData];
-            }
-            aryData = nil;
-        }
-        @synchronized(aryVideo)
-        {
-            [aryVideo addObject:dataInfo];
-        }
-    }
-    else
-    {
-        [aryData appendBytes:aFrameData length:aFrameDataLength];
-    }
+//    unsigned char *unFrame = (unsigned char *)aFrameData;
+//    if(unFrame[3] == 0x67 || unFrame[4] == 0x67)
+//    {
+//        aryData = [NSMutableData data];
+//        [aryData appendBytes:aFrameData length:aFrameDataLength];
+//    }
+//    else if(unFrame[3] == 0x61 || unFrame[4] == 0x61)
+//    {
+//        NSData *dataInfo = [NSData dataWithBytes:aFrameData length:aFrameDataLength];
+//        if(aryData)
+//        {
+//            @synchronized(aryVideo)
+//            {
+//                [aryVideo addObject:aryData];
+//            }
+//            aryData = nil;
+//        }
+//        @synchronized(aryVideo)
+//        {
+//            [aryVideo addObject:dataInfo];
+//        }
+//    }
+//    else
+//    {
+//        [aryData appendBytes:aFrameData length:aFrameDataLength];
+//    }
     return true;
 }
 

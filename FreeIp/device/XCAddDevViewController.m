@@ -22,7 +22,7 @@
     BOOL upOrdown;
     UIButton *btnPhoto;
     NSTimer *timer;
-    
+    CGFloat fVWidth,fVHeight;
     AddDeviceService *addService;
 }
 @property (nonatomic,strong) XCUpdView *addView;
@@ -57,7 +57,19 @@
     
 }
 
-
+-(void)loadView
+{
+    if (IOS_SYSTEM_8) {
+        fVHeight = kScreenSourchHeight;
+        fVWidth = kScreenSourchWidth;
+    }
+    else
+    {
+        fVWidth = kScreenSourchHeight;
+        fVHeight = kScreenSourchWidth;
+    }
+    self.view = [[UIView alloc] initWithFrame:Rect(0, 0, fVWidth, fVHeight)];
+}
 
 -(void)enterAddTextController
 {
@@ -73,17 +85,8 @@
 - (void)initUIView
 {
     CGFloat fWidth,fHeight;
-    if (IOS_SYSTEM_8)
-    {
-        fWidth = kScreenSourchWidth;
-        fHeight = kScreenSourchHeight;
-    }
-    else
-    {
-        fWidth = kScreenSourchHeight;
-        fHeight = kScreenSourchWidth;
-    }
-    UIView *headView = [[UIView alloc] initWithFrame:Rect(0, 0, fWidth,64)];
+
+    UIView *headView = [[UIView alloc] initWithFrame:Rect(0, 0,fVWidth,64)];
     UIButton *btnBack = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnBack addTarget:self action:@selector(navBack) forControlEvents:UIControlEventTouchUpInside];
     [btnBack setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
@@ -95,7 +98,7 @@
     
     
     [headView setBackgroundColor:RGB(15, 173, 225)];
-    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(50, 20, fWidth-100, 20)];
+    UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(50, 20, fVWidth-100, 20)];
     [lblName setFont:XCFONT(20.0)];
     [lblName setTextColor:RGB(255, 255,255)];
     [lblName setText:XCLocalized(@"devDetails")];
@@ -105,20 +108,19 @@
     
     
     _readerView = [[ZBarReaderView alloc] init];
-    _readerView.frame = Rect(0,64,fWidth,fHeight-64);
+    _readerView.frame = Rect(0,64,fVWidth,fVHeight-64);
     [self.view addSubview:_readerView];
     _readerView.readerDelegate = self;
     [_readerView setAllowsPinchZoom:YES];
     [_readerView willRotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight duration:1.0f];
     
-//    [_readerView set]
     ZBarImageScanner * scanner = _readerView.scanner;
     [scanner setSymbology:ZBAR_I25
                    config:ZBAR_CFG_ENABLE
                        to:0];
     _readerView.torchMode = 0;
     
-    UIView *view = [[UIView alloc] initWithFrame:Rect(0, 0,kScreenWidth, 170)];//上
+    UIView *view = [[UIView alloc] initWithFrame:Rect(0, 0,fVWidth, 170)];//上
     [view setBackgroundColor:[UIColor blackColor]];
     [_readerView addSubview:view];
     view.alpha = 0.6f;

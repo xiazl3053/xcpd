@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4DA2BFDB1AE663F8002F46CD /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD71AE663F8002F46CD /* libavcodec.a */; };
+		4DA2BFDC1AE663F8002F46CD /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD81AE663F8002F46CD /* libavformat.a */; };
+		4DA2BFDD1AE663F8002F46CD /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD91AE663F8002F46CD /* libavutil.a */; };
+		4DA2BFDE1AE663F8002F46CD /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFDA1AE663F8002F46CD /* libswscale.a */; };
 		BB024A401AE0A5C10019CB52 /* XCHIddenView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB024A3F1AE0A5C10019CB52 /* XCHIddenView.m */; };
 		BB024A431AE0A8440019CB52 /* XCBtnChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = BB024A421AE0A8440019CB52 /* XCBtnChannel.m */; };
-		BB0CB88A1ADBCBDD005269EB /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB8861ADBCBDD005269EB /* libavcodec.a */; };
-		BB0CB88B1ADBCBDD005269EB /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB8871ADBCBDD005269EB /* libavformat.a */; };
-		BB0CB88C1ADBCBDD005269EB /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB8881ADBCBDD005269EB /* libavutil.a */; };
-		BB0CB88D1ADBCBDD005269EB /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB8891ADBCBDD005269EB /* libswscale.a */; };
 		BB0CB8921ADBCC3D005269EB /* libenet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB88E1ADBCC3D005269EB /* libenet.a */; };
 		BB0CB8931ADBCC3D005269EB /* libnattrav.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB88F1ADBCC3D005269EB /* libnattrav.a */; };
 		BB0CB8941ADBCC3D005269EB /* librutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB8901ADBCC3D005269EB /* librutil.a */; };
@@ -190,14 +190,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4DA2BFD71AE663F8002F46CD /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = libs/libavcodec.a; sourceTree = "<group>"; };
+		4DA2BFD81AE663F8002F46CD /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = libs/libavformat.a; sourceTree = "<group>"; };
+		4DA2BFD91AE663F8002F46CD /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = libs/libavutil.a; sourceTree = "<group>"; };
+		4DA2BFDA1AE663F8002F46CD /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = libs/libswscale.a; sourceTree = "<group>"; };
 		BB024A3E1AE0A5C10019CB52 /* XCHIddenView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCHIddenView.h; sourceTree = "<group>"; };
 		BB024A3F1AE0A5C10019CB52 /* XCHIddenView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCHIddenView.m; sourceTree = "<group>"; };
 		BB024A411AE0A8440019CB52 /* XCBtnChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCBtnChannel.h; sourceTree = "<group>"; };
 		BB024A421AE0A8440019CB52 /* XCBtnChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCBtnChannel.m; sourceTree = "<group>"; };
-		BB0CB8861ADBCBDD005269EB /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = libs/libavcodec.a; sourceTree = "<group>"; };
-		BB0CB8871ADBCBDD005269EB /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = libs/libavformat.a; sourceTree = "<group>"; };
-		BB0CB8881ADBCBDD005269EB /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = libs/libavutil.a; sourceTree = "<group>"; };
-		BB0CB8891ADBCBDD005269EB /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = libs/libswscale.a; sourceTree = "<group>"; };
 		BB0CB88E1ADBCC3D005269EB /* libenet.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libenet.a; path = p2plib/libenet.a; sourceTree = "<group>"; };
 		BB0CB88F1ADBCC3D005269EB /* libnattrav.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnattrav.a; path = p2plib/libnattrav.a; sourceTree = "<group>"; };
 		BB0CB8901ADBCC3D005269EB /* librutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librutil.a; path = p2plib/librutil.a; sourceTree = "<group>"; };
@@ -553,24 +553,24 @@
 				BB6319631AC2B8FA00016ED5 /* CoreVideo.framework in Frameworks */,
 				BB6319611AC2B8EF00016ED5 /* QuartzCore.framework in Frameworks */,
 				BB63195D1AC2B7FF00016ED5 /* CoreMedia.framework in Frameworks */,
-				BB0CB88B1ADBCBDD005269EB /* libavformat.a in Frameworks */,
+				4DA2BFDC1AE663F8002F46CD /* libavformat.a in Frameworks */,
 				BB63195F1AC2B8D900016ED5 /* AVFoundation.framework in Frameworks */,
 				BB0CB8931ADBCC3D005269EB /* libnattrav.a in Frameworks */,
 				BB63195B1AC2B7E700016ED5 /* libiconv.2.dylib in Frameworks */,
 				BB9F46A71AB90AE1002AF594 /* CFNetwork.framework in Frameworks */,
 				BB9F46A51AB90AD7002AF594 /* CoreFoundation.framework in Frameworks */,
 				BB9F46A31AB90ACF002AF594 /* CoreGraphics.framework in Frameworks */,
+				4DA2BFDD1AE663F8002F46CD /* libavutil.a in Frameworks */,
 				BB9F46A11AB90ABD002AF594 /* libbz2.dylib in Frameworks */,
-				BB0CB88C1ADBCBDD005269EB /* libavutil.a in Frameworks */,
 				BB0CB8921ADBCC3D005269EB /* libenet.a in Frameworks */,
 				BB9F469F1AB90AB8002AF594 /* libz.dylib in Frameworks */,
 				BB9F469C1AB90A7D002AF594 /* libstdc++.6.dylib in Frameworks */,
+				4DA2BFDE1AE663F8002F46CD /* libswscale.a in Frameworks */,
 				BB9F468F1AB909EA002AF594 /* libsqlite3.dylib in Frameworks */,
 				BB0CB8951ADBCC3D005269EB /* libsdkclient.a in Frameworks */,
 				BB0CB8941ADBCC3D005269EB /* librutil.a in Frameworks */,
-				BB0CB88D1ADBCBDD005269EB /* libswscale.a in Frameworks */,
 				BBDC51031AB81A7600C81D00 /* libzbar.a in Frameworks */,
-				BB0CB88A1ADBCBDD005269EB /* libavcodec.a in Frameworks */,
+				4DA2BFDB1AE663F8002F46CD /* libavcodec.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,14 +752,14 @@
 		BB9F469D1AB90A87002AF594 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				BB0CB8861ADBCBDD005269EB /* libavcodec.a */,
+				4DA2BFD71AE663F8002F46CD /* libavcodec.a */,
+				4DA2BFD81AE663F8002F46CD /* libavformat.a */,
+				4DA2BFD91AE663F8002F46CD /* libavutil.a */,
+				4DA2BFDA1AE663F8002F46CD /* libswscale.a */,
 				BB0CB88E1ADBCC3D005269EB /* libenet.a */,
 				BB0CB88F1ADBCC3D005269EB /* libnattrav.a */,
 				BB0CB8901ADBCC3D005269EB /* librutil.a */,
 				BB0CB8911ADBCC3D005269EB /* libsdkclient.a */,
-				BB0CB8871ADBCBDD005269EB /* libavformat.a */,
-				BB0CB8881ADBCBDD005269EB /* libavutil.a */,
-				BB0CB8891ADBCBDD005269EB /* libswscale.a */,
 				BB6319621AC2B8FA00016ED5 /* CoreVideo.framework */,
 				BB6319601AC2B8EF00016ED5 /* QuartzCore.framework */,
 				BB63195E1AC2B8D900016ED5 /* AVFoundation.framework */,
@@ -1756,15 +1756,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/FreeIp/General/ZBarSDK",
-					"$(PROJECT_DIR)/FreeIp/other/libs",
-					"$(PROJECT_DIR)/FreeIp/other/p2plib",
 					"$(PROJECT_DIR)/libs",
 					"$(PROJECT_DIR)/p2plib",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b4db5bec-07a5-4209-81eb-c0423703eef2";
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos8.1;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "arm64 armv7";
 			};
@@ -1791,14 +1789,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/FreeIp/General/ZBarSDK",
-					"$(PROJECT_DIR)/FreeIp/other/libs",
-					"$(PROJECT_DIR)/FreeIp/other/p2plib",
 					"$(PROJECT_DIR)/libs",
 					"$(PROJECT_DIR)/p2plib",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b4db5bec-07a5-4209-81eb-c0423703eef2";
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos8.1;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "arm64 armv7";
 			};

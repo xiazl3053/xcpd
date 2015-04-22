@@ -27,7 +27,7 @@
     XCUpdView *nameView;
     DeleteDevService *delService;
     UIButton *btnDel;
-    
+    UIView *grayView;
     UpdNameService *updService;
 }
 @property (nonatomic,strong) DeviceInfoModel *devInfo;
@@ -60,7 +60,7 @@
     btnDel = [UIButton buttonWithType:UIButtonTypeCustom];
     [btnDel addTarget:self action:@selector(deleteDevInfo:) forControlEvents:UIControlEventTouchUpInside];
     [btnDel setTitle:XCLocalized(@"deleteDevice") forState:UIControlStateNormal];
-    [btnDel setBackgroundColor:RGB(15,173,225)];
+    [btnDel setBackgroundColor:RGB(234,98,84)];
     btnDel.frame = Rect(20,514,self.view.width-40,50);
     btnDel.titleLabel.font = XCFONT(17);
     [self.view addSubview:btnDel];
@@ -70,12 +70,16 @@
     nameView = [[XCUpdView alloc] initWithFrame:Rect(100,self.view.height/2-200, self.view.width-200, 400)];
     [nameView setTitle:XCLocalized(@"Modify")];
     [nameView.txtField setPlaceholder:XCLocalized(@"cameraName")];
-    [self.view addSubview:nameView];
     nameView.delegate = self;
     nameView.hidden = YES;
     updService = [[UpdNameService alloc] init];
     
-    
+    grayView = [[UIView alloc] initWithFrame:self.view.bounds];
+    [grayView setBackgroundColor:[UIColor grayColor]];
+    grayView.alpha = 0.9;
+    grayView.hidden = YES;
+    [self.view addSubview:grayView];
+    [self.view addSubview:nameView];
 }
 
 -(void)closeTxtField
@@ -126,7 +130,9 @@
 
 -(void)closeView
 {
+    grayView.hidden = YES;
     nameView.hidden = YES;
+    
 }
 
 -(void)addDeviceInfo
@@ -189,7 +195,9 @@
 
 -(void)showUpdView
 {
+//    [self.view setBackgroundColor:RGB(128, 128, 128)];
     nameView.hidden = NO;
+    grayView.hidden = NO;
 }
 
 -(void)setFirstDevInfo:(DeviceInfoModel *)devInfo
@@ -214,13 +222,11 @@
 
 -(void)setDeviceInfo:(DeviceInfoModel *)devInfo
 {
-     NSString *strNewType = [DecodeJson getDeviceTypeByType:[devInfo.strDevType intValue]];
-     devInfo.strNewType = strNewType;
+    NSString *strNewType = [DecodeJson getDeviceTypeByType:[devInfo.strDevType intValue]];
+    devInfo.strNewType = strNewType;
     [imgView setImage:[UIImage imageNamed:[strNewType isEqualToString:@"IPC"]?@"IPC_Info":@"DVR_Info"]];
     _devInfo = devInfo;
     [infoView setDeviceInfo:devInfo];
-    
-    
 }
 
 - (void)didReceiveMemoryWarning

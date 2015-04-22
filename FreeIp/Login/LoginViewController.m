@@ -86,8 +86,9 @@
     [lblName setFont:XCFONT(25)];
     [self.view addSubview:lblName];
     
+    //分割线
     UILabel *lblContent = [[UILabel alloc] initWithFrame:Rect(lblName.x,lblName.y+lblName.height+15, kTextfieldWidth, 1)];
-    [lblContent setBackgroundColor:[UIColor whiteColor]];
+    [lblContent setBackgroundColor:[UIColor whiteColor]];//RGB(179, 197, 180)];
     [self.view addSubview:lblContent];
     
     _txtUser = [[XCTextField alloc] initWithFrame:Rect(lblContent.x,lblContent.y+lblContent.height+29, kTextfieldWidth, 51.5)];
@@ -114,7 +115,7 @@
     
     _loginCheck = [[QCheckBox alloc] initWithDelegate:self];
     _loginCheck.titleLabel.font = XCFONT(15);
-    _loginCheck.frame = Rect(_txtPwd.x+_txtPwd.width-labelsize.width-33, _txtPwd.y+_txtPwd.height+24, 100, 15);
+    _loginCheck.frame = Rect(_txtPwd.x+_txtPwd.width-labelsize.width-33, _txtPwd.y+_txtPwd.height+24, 100, 20);
     
     [_loginCheck setTitle:XCLocalized(@"autoLogin") forState:UIControlStateNormal];
     [_loginCheck setTitleColor:color forState:UIControlStateNormal];

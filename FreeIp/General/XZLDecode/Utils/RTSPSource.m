@@ -98,10 +98,7 @@
  */
 -(void)destorySource
 {
-    if(pFormatContext)
-    {
-        avformat_close_input(&pFormatContext);
-    }
+  
 }
 
 -(id)initWithPath:(NSString *)strPath devName:(NSString *)strDevName
@@ -115,7 +112,10 @@
 
 -(void)dealloc
 {
-    [self destorySource];
+    if(pFormatContext)
+    {
+        avformat_close_input(&pFormatContext);
+    }
 }
 -(void)startRecording:(NSString *)strFile
 {

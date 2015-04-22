@@ -43,6 +43,7 @@
     self = [super initWithPath:strPath name:strDevName];
     _privateSrc = [[PrivateSource alloc] initWithPath:strPath devName:strDevName code:1];
     self.strNO = strPath;
+    self.nCodeType = 1;
     self.strDevName = strDevName;
     return self;
 }
@@ -108,11 +109,12 @@
         ^{
             [__self.imgView makeToast:XCLocalized(@"connectFail")];
         });
-        [self stopPlay];
+        [self stopVideo];
+        //停止视频操作,发送失败通知
     }
 }
 
--(BOOL)stopPlay
+-(BOOL)stopVideo
 {
     [super stopPlay];
     self.bPlaying = NO;
@@ -126,7 +128,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_PRIVATE_VC object:self.strKey];
     return YES;
 }
-
+#pragma mark 视频切换
 -(BOOL)switchCode:(int)nCode
 {
     if (self.nCodeType == nCode) {
@@ -142,6 +144,7 @@
     PrivateSource *privateSrc = [[PrivateSource alloc] initWithPath:self.strNO devName:self.strDevName code:nCode];
     self.bDecoding = NO;
     _privateSrc = privateSrc;
+    _privateSrc.strKey = self.strKey;
     self.nCodeType = nCode;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         [__self initDecoder];
