@@ -139,7 +139,7 @@
 {
     if ([nameView.txtField.text isEqualToString:@""])
     {
-        [self.view makeToast:@"设备名不能为空"];
+        [self.view makeToast:XCLocalized(@"cameranull")];
     }
     else
     {

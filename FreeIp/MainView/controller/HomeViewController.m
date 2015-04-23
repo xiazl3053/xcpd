@@ -221,9 +221,14 @@
     CGPoint p2 = [pinchSender locationOfTouch:1 inView:pinchSender.view ];
     
     CGPoint newCenter = CGPointMake( (p1.x+p2.x)/2,(p1.y+p2.y)/2);
+    CGFloat fScale = 0;
+    if([pinchSender scale]>1)
+    {
+        fScale = ([pinchSender scale]-1)/2;
+        DLog(@"fscale:%f",fScale);
+    }
     
-    
-   DLog(@"pinch-state:%f--newCenter:%f--%f",[pinchSender scale],newCenter.x,newCenter.y);
+//   DLog(@"pinch-state:%f--newCenter:%f--%f",[pinchSender scale],newCenter.x,newCenter.y);
    [playControl setImgScale:[pinchSender scale] point:newCenter];
     if ([pinchSender state] == UIGestureRecognizerStateEnded)
     {

@@ -97,6 +97,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.view setBackgroundColor:RGB(239, 239, 244)];
     [self initUI];
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,64, self.view.width, fHeight-64)];
     [self.view addSubview:_tableView];
@@ -143,24 +144,40 @@
 
 -(void)addQueryView
 {
-    _queryView = [[UIView alloc] initWithFrame:Rect(0,[CustomNaviBarView barSize].height, self.view.width, 48)];
-
-    UILabel *label = [[UILabel alloc] initWithFrame:Rect(10,12,40,15)];
-    UILabel *lblStart = [[UILabel alloc] initWithFrame:Rect(52, 12, (self.view.width-150)/2, 15)];
-    UILabel *label2 = [[UILabel alloc] initWithFrame:Rect((self.view.width-150)/2+55, 12, 40, 15)];
-    UILabel *lblEnd = [[UILabel alloc] initWithFrame:Rect((self.view.width-150)/2+95, 12, (self.view.width-150)/2, 15)];
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = Rect(lblEnd.frame.origin.x+lblEnd.frame.size.width+10, 2 , 44, 44);
-    [label setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
-    [lblStart setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
-    [label2 setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
-    [lblEnd setFont:[UIFont fontWithName:@"Helvetica" size:15.0f]];
+    _queryView = [[UIView alloc] initWithFrame:Rect(self.view.width-300,64, 300, 210)];
+    [_queryView setBackgroundColor:RGB(255, 255, 255)];
     
-    label.text = XCLocalized(@"startTime");
-    label2.text = XCLocalized(@"endTime");
+    
+    UILabel *lblTitle = [[UILabel alloc] initWithFrame:Rect(50, 10, 200, 20)];
+    [lblTitle setText:XCLocalized(@"search")];
+    [_queryView addSubview:lblTitle];
+    [lblTitle setFont:XCFONT(19)];
+    [lblTitle setTextAlignment:NSTextAlignmentCenter];
+
+    UILabel *lblContent = [[UILabel alloc] initWithFrame:Rect(50, 40, 200, 1)];
+    [lblContent setBackgroundColor:RGB(128, 128, 128)];
+    [_queryView addSubview:lblContent];
+  
+    UILabel *lblStart = [[UILabel alloc] initWithFrame:Rect(50, 50, 200, 30)];
+    [lblStart setTextAlignment:NSTextAlignmentLeft];
+    [lblStart setText:XCLocalized(@"startTime")];
+    [lblStart setFont:XCFONT(15.0)];
+    [_queryView addSubview:lblStart];
+    
+    UILabel *lblEnd = [[UILabel alloc] initWithFrame:Rect(50, lblStart.y+40, 200, 30)];
+    [lblEnd setText:XCLocalized(@"endTime")];
+    [lblEnd setFont:XCFONT(15.0)];
+    [_queryView addSubview:lblEnd];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame = Rect(50, lblEnd.y+40 , 200,30);
+    [btn setTitleColor:RGB(255,255,255) forState:UIControlStateNormal];
+    [btn setBackgroundColor:RGB(15, 173, 225)];
+    [btn setTitle:XCLocalized(@"search") forState:UIControlStateNormal];
+    [_queryView addSubview:btn];
+    
     lblStart.textColor = RGB(15,173,225);
     lblEnd.textColor = RGB(15, 173, 225);
-    
     NSDate *date = [NSDate date];
     NSString *strEnd = [NSString stringWithFormat:@"%d-%02d-%02d",date.year,date.month,date.day];
     NSDate *agoDate = [NSDate dateWithTimeIntervalSinceNow:-7*24*60*60];
@@ -168,25 +185,13 @@
     lblStart.text = strStart;
     lblEnd.text = strEnd;
     [lblStart addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(startDate)]];
+    
     [lblEnd addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endDate)]];
     [lblEnd setUserInteractionEnabled:YES];
     [lblStart setUserInteractionEnabled:YES];
-    
-    label.textColor = [UIColor blackColor];
-    label2.textColor = [UIColor blackColor];
-    [btn setImage:[UIImage imageNamed:@"query"] forState:UIControlStateNormal];
-    [btn setImage:[UIImage imageNamed:@""] forState:UIControlStateHighlighted];
-    
+
     [btn addTarget:self action:@selector(queryRecordInfo) forControlEvents:UIControlEventTouchUpInside];
     
-    [_queryView addSubview:lblStart];
-    [_queryView addSubview:label];
-    [_queryView addSubview:label2];
-    [_queryView addSubview:lblEnd];
-    [_queryView addSubview:btn];
-    
-    label.tag = 1001;
-    label2.tag = 1002;
     lblStart.tag = 1003;
     lblEnd.tag = 1004;
     btn.tag = 1005;
@@ -468,7 +473,7 @@
     
     NSInteger nLength = nInfo+nRecord;
     NSInteger nRow = (nLength%4 == 0) ? (nLength/4) : (nLength/4 + 1);
-    return 4+nRow * 144;
+    return 4+nRow * 172;
 }
 
 -(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated

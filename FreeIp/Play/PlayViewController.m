@@ -14,7 +14,7 @@
 #import "Toast+UIView.h"
 #import "CaptureService.h"
 
-#define kScaleMax 4.0
+#define kScaleMax 2.0
 
 @interface PlayViewController ()
 {
@@ -82,50 +82,6 @@
     [_imgView setUserInteractionEnabled:YES];
     [self.view insertSubview:_imgView atIndex:0];
 }
-
--(void)panEvent:(UIPanGestureRecognizer*)sender
-{
-    if ([sender state] == UIGestureRecognizerStateBegan) {
-        CGPoint curPoint = [sender locationInView:self.view];
-        lastX = curPoint.x;
-        lastY = curPoint.y;
-        return;
-    }
-    CGPoint curPoint = [sender locationInView:self.view];
-    CGFloat frameX = (_imgView.x + (curPoint.x-lastX)) > 0 ? 0 : (abs(_imgView.x+(curPoint.x-lastX))+fWidth >= _imgView.width ? -(_imgView.width-fWidth) : (_imgView.x+(curPoint.x-lastX)));
-    CGFloat frameY =(_imgView.y + (curPoint.y-lastY))>0?0: (abs(_imgView.y+(curPoint.y-lastY))+fHeight >= _imgView.height ? -(_imgView.height-fHeight) : (_imgView.y+(curPoint.y-lastY)));
-    _imgView.frame = Rect(frameX,frameY , _imgView.width, _imgView.height);
-    lastX = curPoint.x;
-    lastY = curPoint.y;
-}
-
--(void)pinchEvent:(UIPinchGestureRecognizer*)sender
-{
-    DLog(@"点击事件");
-    if([sender state] == UIGestureRecognizerStateBegan) {
-        //   lastScale = 1.0;
-        return;
-    }
-    CGFloat glWidth = _imgView.frame.size.width;
-    CGFloat glHeight = _imgView.frame.size.height;
-    CGFloat fScale = [sender scale];
-    
-    if (_imgView.frame.size.width * [sender scale] <= fWidth)
-    {
-        lastScale = 1.0f;
-        _imgView.frame = Rect(0, 0, fWidth, fHeight);
-    }
-    else
-    {
-        lastScale = 1.5f;
-        CGPoint point = [sender locationInView:self.view];
-        DLog(@"point:%f--%f",point.x,point.y);
-        CGFloat nowWidth = glWidth*fScale>fWidth*4?fWidth*4:glWidth*fScale;
-        CGFloat nowHeight =glHeight*fScale >fHeight* 4?fHeight*4:glHeight*fScale;
-        _imgView.frame = Rect(fWidth/2 - nowWidth/2,fHeight/2- nowHeight/2,nowWidth,nowHeight);
-    }
-}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -282,26 +238,7 @@
     
     return NO;
 }
-//
-//-(void)setImgScale:(CGFloat)fScale
-//{
-//    CGFloat glWidth = self.view.width;
-//    CGFloat glHeight = self.view.height;
-//    
-//    if (self.view.width * fScale <= fSrcWidth) {
-//        self.view.frame = Rect(0, 0, fSrcWidth, fSrcHeight);
-//    }
-//    else
-//    {
-//        CGFloat nowWidth = glWidth * fScale > fSrcWidth * kScaleMax ? fSrcWidth * kScaleMax : glWidth * fScale ;
-//        
-//        CGFloat nowHeight = glHeight * fScale > fSrcHeight * kScaleMax ? fSrcHeight * kScaleMax : glHeight * fScale ;
-//        
-//        self.view.frame = Rect(fSrcWidth/2-nowWidth/2, fSrcHeight/2-nowHeight/2, nowWidth, nowHeight);
-//    }
-//    
-//}
-//
+
 -(void)setImgScale:(CGFloat)fScale
 {
     CGFloat glWidth = _imgView.width;
@@ -318,7 +255,6 @@
         
         _imgView.frame = Rect(fSrcWidth/2-nowWidth/2, fSrcHeight/2-nowHeight/2, nowWidth, nowHeight);
     }
-    
 }
 
 -(void)setImgScale:(CGFloat)fScale point:(CGPoint)curPoint
@@ -332,17 +268,61 @@
     else
     {
         CGFloat fOrgX,fOrgY;
-       
+        if (curPoint.x <= fSrcWidth/2) {
+            fOrgX = curPoint.x;//x正数    1
+        }
+        else
+        {
+            fOrgX = fSrcWidth/2-curPoint.x;//X必须为负   2
+        }
         
-        fOrgX = curPoint.x - fSrcWidth/2;
-        fOrgY = curPoint.y - fSrcHeight/2;
+        if (curPoint.y <= fSrcHeight/2) {
+            fOrgY = curPoint.y;//3
+        }
+        else
+        {
+            fOrgY = fSrcHeight/2-curPoint.y;//至负      4
+        }
+        //1 3     A     1   4     B
+        //2 3     C     2   4     D
         
-        
+        //   +x   x或正  或负
         CGFloat nowWidth = glWidth * fScale > fSrcWidth * kScaleMax ? fSrcWidth * kScaleMax : glWidth * fScale ;
         
         CGFloat nowHeight = glHeight * fScale > fSrcHeight * kScaleMax ? fSrcHeight * kScaleMax : glHeight * fScale ;
         
-        _imgView.frame = Rect(fOrgX>0 ? (0-fOrgX) : fOrgX, fOrgY >0 ? ( 0-fOrgY) : fOrgY, nowWidth, nowHeight);
+        CGFloat fBit = fSrcWidth/nowWidth;
+        
+        DLog(@"fBit:%f",fBit);
+        
+        fBit = 0.5;
+        
+        
+        //1.根据放大比例来调整位移
+        //2.fsrcWidth/2-nowWidth/2
+        CGFloat lastNewX = fSrcWidth/2-nowWidth/2+fOrgX*fBit;
+        CGFloat lastNewY = fSrcHeight/2-nowHeight/2+fOrgY*fBit;
+        if (lastNewX >= 0)
+        {
+            lastNewX = 0;
+//            DLog(@"lastNewX = 0;调整");
+        }
+        else if(lastNewX+nowWidth <= fSrcWidth)
+        {
+            lastNewX = fSrcWidth-nowWidth;
+//            DLog(@"lastNewX = fSrcWidth-nowWidth;调整");
+        }
+        
+        if (lastNewY >=0 ) {
+            lastNewY = 0;
+//            DLog(@"lastNewY = 0;调整");
+        }
+        else if(lastNewY + nowHeight <= fSrcHeight)
+        {
+            lastNewY = fSrcHeight-nowHeight;
+//            DLog(@"lastNewY + nowHeight <= fSrcHeight:调整");
+        }
+        _imgView.frame = Rect(lastNewX,lastNewY, nowWidth, nowHeight);
     }
     
 }

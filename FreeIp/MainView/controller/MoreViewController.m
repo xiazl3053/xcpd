@@ -178,6 +178,7 @@
         __weak MoreViewController *__weakSelf = self;
         __weak XCUpdView *__updView = updView;
         __weak XCDetailsView *__detailView = _detailsView;
+        __weak UIView *__grayView = grayView;
         _updRealService.httpBlock = ^(int nStatus)
         {
             dispatch_async(dispatch_get_main_queue(), ^{[ProgressHUD dismiss];});
@@ -186,6 +187,7 @@
                 {
                     [__weakSelf.view makeToast:XCLocalized(@"updateOK")];
                     __updView.hidden = YES;
+                    __grayView.hidden = YES;
                     [__detailView setRealName:__updView.txtField.text];
                 }
                 break;
@@ -197,9 +199,9 @@
             }
         };
         dispatch_async(dispatch_get_main_queue(),
-                       ^{
-                           [ProgressHUD show:XCLocalized(@"updnicking")];
-                       });
+        ^{
+               [ProgressHUD show:XCLocalized(@"updnicking")];
+        });
         [_updRealService requestUpdReal:strEmail];
     }
 }
@@ -235,6 +237,7 @@
         __weak XCUpdView *__updView = updView;
         __weak XCDetailsView *__detailView = _detailsView;
         __weak UIView *__weakView = grayView;
+        __weak UIView *__grayView = grayView;
         _emailServer.httpBlock = ^(int nStatus)
         {
             dispatch_async(dispatch_get_main_queue(), ^{[ProgressHUD dismiss];});
@@ -244,6 +247,7 @@
                     [__weakSelf.view makeToast:XCLocalized(@"updateOK")];
                     __weakView.hidden = YES;
                     __updView.hidden = YES;
+                    __grayView.hidden = YES;
                     [__detailView setEmail:__updView.txtField.text];
                 }
                 break;
@@ -290,7 +294,7 @@
         __weak XCUserInfoView *__userInfoView = _userInfoView;
         __block NSString *__strOnlyName = strEmail;
         __weak XCUpdView *__updView = updView;
-        __weak UIView *__weakView = grayView;
+        __weak UIView *__grayView = grayView;
         _updNickService.httpBlock = ^(int nStatus)
         {
             dispatch_async(dispatch_get_main_queue(),
@@ -305,15 +309,15 @@
                     __weakSelf.userAll.strOnlyName = __strOnlyName;
                     
                     [__userInfoView setNickName:__strOnlyName];
-                    __weakView.hidden = YES;
                     __updView.hidden = YES;
+                    __grayView.hidden = YES;
                 }
                 break;
                 default:
                 {
                     [__weakSelf.view makeToast:XCLocalized(@"deleteDeviceFail_server")];
                 }
-                    break;
+                break;
             }
         };
         dispatch_async(dispatch_get_main_queue(),
@@ -535,10 +539,7 @@
 -(void)exitApplication
 {
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
-//    [self.view.superview removeFromSuperview];
     [self dismissViewControllerAnimated:YES completion:nil];
-//    [self removeFromParentViewController];
-//    window.rootViewController = [[LoginViewController alloc] init];
 }
 -(void)updateUIView
 {
@@ -606,7 +607,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -622,7 +623,7 @@
         UIView *view = [[UIView alloc] initWithFrame:tableCell.bounds];
         [view setBackgroundColor:RGB(15, 173, 225)];
         [tableCell setSelectedBackgroundView:view];
-        switch (indexPath.section) {
+        switch (indexPath.row) {
             case 0:
                 tableCell.textLabel.text = XCLocalized(@"userinfo");
                 break;
@@ -655,7 +656,7 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 5;
+    return 1;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -664,7 +665,7 @@
         [view removeFromSuperview];
     }
     _imgViewController = nil;
-    switch (indexPath.section)
+    switch (indexPath.row)
     {
         case 0:
         {

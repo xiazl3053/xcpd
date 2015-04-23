@@ -46,6 +46,25 @@
 {
     [super viewDidLoad];
     [self initUIHead];
+    
+    int nLogin,nSave;
+    NSString *strUsername = [LoginUserDB querySaveInfo:&nSave login:&nLogin];
+    if(strUsername!=nil)
+    {
+        DLog(@"strUsername:%@",strUsername);
+        _txtUser.text = strUsername;
+        if(nSave)
+        {
+            _txtPwd.text = [LoginUserDB queryUserPwd:strUsername];
+            _pwdCheck.checked = YES;
+        }
+        if (nLogin)
+        {
+            _loginCheck.checked = YES;
+            [self loginServer];
+        }
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -114,8 +133,8 @@
     CGSize labelsize = [XCLocalized(@"autoLogin") sizeWithFont:XCFONT(15) constrainedToSize:CGSizeMake(200.0f, MAXFLOAT) lineBreakMode:NSLineBreakByWordWrapping];
     
     _loginCheck = [[QCheckBox alloc] initWithDelegate:self];
-    _loginCheck.titleLabel.font = XCFONT(15);
-    _loginCheck.frame = Rect(_txtPwd.x+_txtPwd.width-labelsize.width-33, _txtPwd.y+_txtPwd.height+24, 100, 20);
+    _loginCheck.titleLabel.font = XCFONT(14);
+    _loginCheck.frame = Rect(_txtPwd.x+_txtPwd.width-labelsize.width-33, _txtPwd.y+_txtPwd.height+24, labelsize.width+33, 20);
     
     [_loginCheck setTitle:XCLocalized(@"autoLogin") forState:UIControlStateNormal];
     [_loginCheck setTitleColor:color forState:UIControlStateNormal];
@@ -248,23 +267,23 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    int nLogin,nSave;
-    NSString *strUsername = [LoginUserDB querySaveInfo:&nSave login:&nLogin];
-    if(strUsername!=nil)
-    {
-        DLog(@"strUsername:%@",strUsername);
-        _txtUser.text = strUsername;
-        if(nSave)
-        {
-             _txtPwd.text = [LoginUserDB queryUserPwd:strUsername];
-            _pwdCheck.checked = YES;
-        }
-        if (nLogin)
-        {
-            _loginCheck.checked = YES;
-            [self loginServer];
-        }
-    }
+//    int nLogin,nSave;
+//    NSString *strUsername = [LoginUserDB querySaveInfo:&nSave login:&nLogin];
+//    if(strUsername!=nil)
+//    {
+//        DLog(@"strUsername:%@",strUsername);
+//        _txtUser.text = strUsername;
+//        if(nSave)
+//        {
+//             _txtPwd.text = [LoginUserDB queryUserPwd:strUsername];
+//            _pwdCheck.checked = YES;
+//        }
+//        if (nLogin)
+//        {
+//            _loginCheck.checked = YES;
+//            [self loginServer];
+//        }
+//    }
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField

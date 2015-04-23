@@ -180,13 +180,6 @@
     _imagePicker.delegate = self;
     _imagePicker.allowsEditing = NO;
     
-//    btnPhoto = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [btnPhoto setImage:[UIImage imageNamed:XCLocalized(@"qrcode")] forState:UIControlStateNormal];
-//    [btnPhoto setImage:[UIImage imageNamed:XCLocalized(@"qrcode_h")] forState:UIControlStateHighlighted];
-//    [self.view addSubview:btnPhoto];
-//    btnPhoto.frame = Rect(kScreenWidth/2-112.5,self.readerView.frame.origin.y + self.readerView.frame.size.height/2.0+145 ,225.5,75.5);
-//    [btnPhoto addTarget:self action:@selector(scanQRCode) forControlEvents:UIControlEventTouchUpInside];
-   
     _addView = [[XCUpdView alloc] initWithFrame:Rect(256,102,500,500)];
     [_readerView addSubview:_addView];
     [_addView setTitle:XCLocalized(@"inputNO")];
@@ -351,7 +344,7 @@
         [__weakSelf.addView makeToastActivity];
     });
     
-    [addService requestAddDevice:_addView.txtField.text auth:@"ABCDEF"];
+    [addService queryDeviceIsExits:_addView.txtField.text auth:@"ABCDEF"];
 }
 
 -(void)viewDidAppear:(BOOL)animated

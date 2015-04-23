@@ -172,6 +172,9 @@
     {
         return ;
     }
+    if ([pinchSender numberOfTouches]!=2) {
+        return ;
+    }
     VideoView *video = (VideoView*) pinchSender.view;
     PlayViewController *playControl = [_aryModel objectForKey:video.strNO];
     if (!playControl) {
@@ -180,8 +183,17 @@
     if ([pinchSender state] == UIGestureRecognizerStateBegan) {
         return ;
     }
-    DLog(@"pinch-state:%f",[pinchSender scale]);
-   [playControl setImgScale:[pinchSender scale]];
+    CGPoint p1 = [pinchSender locationOfTouch:0 inView:pinchSender.view ];
+    
+    CGPoint p2 = [pinchSender locationOfTouch:1 inView:pinchSender.view ];
+    
+    CGPoint newCenter = CGPointMake( (p1.x+p2.x)/2,(p1.y+p2.y)/2);
+    CGFloat fScale = 0;
+    if([pinchSender scale]>1)
+    {
+        fScale = ([pinchSender scale]-1)/2;
+    }
+   [playControl setImgScale:fScale point:newCenter];
     if ([pinchSender state] == UIGestureRecognizerStateEnded)
     {
         if(playControl.imgView.width > video.width)

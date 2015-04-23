@@ -42,6 +42,8 @@
 
 @property (nonatomic,assign) BOOL bPwd;
 
+@property (nonatomic,assign) BOOL bNameAlready;
+
 @end
 
 @implementation RegViewController
@@ -362,10 +364,10 @@
             if(nStatus!=1)
             {
                 [__self.view makeToast:XCLocalized(@"UsernameAlready")];
-                __self.bError = NO;
+                __self.bNameAlready = NO;
             }else
             {
-                __self.bError = YES;
+                __self.bNameAlready = YES;
             }
         };
         [regService requestAuthUsername:_txtUsername.text];
@@ -427,17 +429,21 @@
         [self.view makeToast:XCLocalized(@"picNull")];
         return ;
     }
-    if (!_bError)
+    if (!_bNameAlready)
     {
         [self.view makeToast:XCLocalized(@"UsernameAlready")];
         return;
     }
-    else if(!_bPwdLength)
+    if ([DecodeJson validateEmail:strName]) {
+        [self.view makeToast:XCLocalized(@"emailError")];
+        return ;
+    }
+    else if([strPwd length]>64)
     {
         [self.view makeToast:XCLocalized(@"pwdLength")];
         return;
     }
-    else if(!_bPwd)
+    else if(![strPwd isEqualToString:strAuthPwd])
     {
         [self.view makeToast:XCLocalized(@"TwoPwd")];
         return ;

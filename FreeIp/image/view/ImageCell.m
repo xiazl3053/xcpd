@@ -91,7 +91,7 @@
         fWidth = kScreenSourchHeight-1-kHomeListWidth-kTabbarWidth;
     }
     CGFloat width = fWidth/4-2;//105
-    CGFloat height = 144;
+    CGFloat height = 172;
     NSInteger nLength = _arrayRecord.count+_array.count;
     for (int i = 0; i<nLength; i++)
     {
