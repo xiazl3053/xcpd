@@ -300,6 +300,10 @@
 #pragma mark 销毁Decode
 -(void)dealloc
 {
+    if(bRecord)
+    {
+        [self stopRecording];
+    }
     DLog(@"释放了？");
     if(recv)
     {

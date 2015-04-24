@@ -421,6 +421,7 @@
 
 -(void)closeView
 {
+    [ProgressHUD dismiss];
     grayView.hidden = YES;
     updView.hidden = YES;
 }
@@ -429,6 +430,7 @@
 {
     [updView setTitle:strTitle];
     [updView.txtField setPlaceholder:strPlace];
+    [updView.txtField setText:@""];
     grayView.hidden = NO;
     updView.hidden = NO;
 }

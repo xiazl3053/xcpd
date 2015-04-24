@@ -63,7 +63,7 @@
     [self initTableView];
     playView = [[UIView alloc] initWithFrame:Rect(0, 64, 700,self.view.height-64)];
     [self.view addSubview:playView];
-    [playView setBackgroundColor:RGB(0, 0, 0)];
+//    [playView setBackgroundColor:RGB(0, 0, 0)];
 }
 
 -(void)initRecordView
@@ -111,14 +111,20 @@
 
 -(void)initTableView
 {
-    _tableView = [[UITableView alloc] initWithFrame:Rect(self.view.width-325, 64, 325,self.view.height-64)];
+    UILabel *lblContent = [[UILabel alloc] initWithFrame:Rect(self.view.width-324, 64, 1,self.view.height-64)];
+//    [lblContent setBackgroundColor:RGB(255,255,255)];
+    [lblContent setBackgroundColor:RGB(24, 26, 27)];
+    [self.view addSubview:lblContent];
+    
+    _tableView = [[UITableView alloc] initWithFrame:Rect(self.view.width-323, 64, 323 ,self.view.height-64)];
     [self.view addSubview:_tableView];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.separatorStyle = UITableViewCellAccessoryNone;
-    UIImageView *backImg = [[UIImageView alloc] initWithFrame:_tableView.bounds];
-    [backImg setImage:[UIImage imageNamed:@"his_bg"]];
-    [_tableView setBackgroundView:backImg];
+    
+    [_tableView setBackgroundColor:RGB(36, 40, 41)];
+    
+
 }
 
 -(void)initHeadView
@@ -134,26 +140,30 @@
         fWidth = kScreenSourchHeight;
     }
     headView = [[UIView alloc] initWithFrame:Rect(0, 0,fWidth, 64)];
-    [headView setBackgroundColor:RGB(15, 173, 225)];
+    UIImageView *imgBack = [[UIImageView alloc] initWithFrame:headView.bounds];
+    [imgBack setImage:[UIImage imageNamed:@"top_bg"]];
+    [headView addSubview:imgBack];
+    
     UILabel *lblName = [[UILabel alloc] initWithFrame:Rect(80, 20,fWidth-160, 20)];
     [lblName setTextAlignment:NSTextAlignmentCenter];
     [lblName setText:@"录像播放"];
-    [lblName setTextColor:RGB(255, 255, 255)];
+    [lblName setTextColor:RGB(0, 0,0)];
     [headView addSubview:lblName];
     
     
     
-    XCButton *btnCancel = [[XCButton alloc] initWithFrame:Rect(15, 20, 44, 44) normal:@"his_cancel" high:@"his_cancel_h"];
+    XCButton *btnCancel = [[XCButton alloc] initWithFrame:Rect(15, 20, 44, 44) normal:@"his_cancel_h" high:@"his_cancel"];
     [headView addSubview:btnCancel];
     
     XCButton *btnQuery = [[XCButton alloc] initWithFrame:Rect(fWidth-64, 20, 44, 44) normal:@"his_query" high:@"his_query_h"];
-    [headView addSubview:btnQuery];
+//  [headView addSubview:btnQuery];
     
     [self.view addSubview:headView];
     
     queryView = [[UIView alloc] initWithFrame:Rect(fWidth-200, 80, 180, 160)];
     [self.view addSubview:queryView];
     [queryView setBackgroundColor:[UIColor whiteColor]];
+    
     XCTextField *txtWord = [[XCTextField alloc] initWithFrame:Rect(15,30,150, 20)];
     [queryView addSubview:txtWord];
     UIColor *color = [UIColor whiteColor];

@@ -342,6 +342,5 @@
     lastY = curPoint.y;
 }
 
-
 @end
 

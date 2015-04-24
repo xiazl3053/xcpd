@@ -75,8 +75,8 @@
     
     record.strEndTime = [NSString stringWithFormat:@"%@",morelocationString];
     record.allTime = 0;
-    
-   [RecordDb insertRecord:record];
+    DLog(@"录像结束%d",(int)record.nFramesNum);
+    [RecordDb insertRecord:record];
     
     return YES;
 }

@@ -190,8 +190,10 @@ DEFINE_SINGLETON_FOR_CLASS(CaptureService);
     
     NSString *strPath = [strDir stringByAppendingPathComponent:fileName];//与Library路径组合
     
-    [UIImageJPEGRepresentation(image,1.0f) writeToFile:strPath atomically:YES];//将图片数据写入路径
-    
+    BOOL bReturn = [UIImageJPEGRepresentation(image,1.0f) writeToFile:strPath atomically:YES];//将图片数据写入路径
+    if (!bReturn) {
+        return nil;
+    }
     [[NSURL fileURLWithPath:strPath] setResourceValue: [NSNumber numberWithBool: YES]
                                                forKey: NSURLIsExcludedFromBackupKey error:nil];//路径防icloud拷贝
     return fileName;

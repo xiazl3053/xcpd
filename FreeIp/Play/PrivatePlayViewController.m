@@ -96,10 +96,7 @@
             _decoder = [[XLDecoder alloc] initWithDecodeSource:_privateSrc];
             [self.decodeImp decoder_init:_decoder];
         }
-        else
-        {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
         [self startPlay];
     }
     else
@@ -116,7 +113,6 @@
 
 -(BOOL)stopVideo
 {
-    [super stopPlay];
     self.bPlaying = NO;
     _privateSrc = nil;
     __weak PrivatePlayViewController *__weakSelf = self;
@@ -125,7 +121,7 @@
          [__weakSelf.imgView hideToastActivity];
          [__weakSelf.imgView setImage:nil];
     });
-    [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_PRIVATE_VC object:self.strKey];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_DIRECT_VC object:self.strKey];
     return YES;
 }
 #pragma mark 视频切换
@@ -136,11 +132,17 @@
     }
     self.bPlaying = NO;
     self.bDecoding = YES;
+    
+    
+    
     __weak PrivatePlayViewController *__self = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [__self.imgView makeToast:XCLocalized(@"videoSwitch")];
     });
     _privateSrc = nil;
+    [_decoder stopDecode];
+    _decoder = nil;
+    
     PrivateSource *privateSrc = [[PrivateSource alloc] initWithPath:self.strNO devName:self.strDevName code:nCode];
     self.bDecoding = NO;
     _privateSrc = privateSrc;

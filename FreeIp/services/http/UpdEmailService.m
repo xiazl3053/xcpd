@@ -19,7 +19,7 @@
                         XCLocalized(@"httpserver"),[UserInfo sharedUserInfo].strSessionId,strEmail];
     [self sendRequest:strUrl];
 }
--(void)reciveLoginInfo:(NSURLResponse*) response data:(NSData*)data error:(NSError*)connectionError
+-(void)reciveHttp:(NSURLResponse*) response data:(NSData*)data error:(NSError*)connectionError
 {
     NSInteger responseCode = [(NSHTTPURLResponse *)response statusCode];
     if (!connectionError && responseCode == 200)

@@ -335,5 +335,4 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     private_protocol_stop(&info);
 }
 
-
 @end

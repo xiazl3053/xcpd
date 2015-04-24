@@ -8,6 +8,7 @@
 
 #import "RTSPPlayViewController.h"
 #import "RTSPSource.h"
+#import "XCNotification.h"
 #import "XLDecoder.h"
 #import "Toast+UIView.h"
 
@@ -92,6 +93,7 @@
             _decoder = [[XLDecoder alloc] initWithDecodeSource:_rtspSrc];
             [self.decodeImp decoder_init:_decoder];
          }
+        [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
         self.bPlaying = YES;
         [self startPlay];
     }
@@ -106,15 +108,19 @@
         [self stopPlay];
     }
 }
-
-
--(BOOL)stopPlay
+-(BOOL)stopVideo
 {
-    [super stopPlay];
-     
+    self.bPlaying = NO;
+    _rtspSrc = nil;
+    __weak RTSPPlayViewController *__weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+         [__weakSelf.imgView hideToastActivity];
+         [__weakSelf.imgView setImage:nil];
+    });
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_CLOSE_DIRECT_VC object:self.strKey];
     return YES;
 }
-
 
 -(BOOL)switchCode:(int)nCode
 {
@@ -128,6 +134,8 @@
         [__self.imgView makeToast:XCLocalized(@"videoSwitch")];
     });
     _rtspSrc = nil;
+    [_decoder stopDecode];
+    _decoder = nil;
     NSString *strPath = nil;
     NSString *strAdmin = [@"" isEqualToString:self.rtsp.strUser] ? @"" : [NSString stringWithFormat:@"%@:%@@",self.rtsp.strUser,self.rtsp.strUser];
     if ([self.rtsp.strType isEqualToString:@"IPC"])
@@ -150,7 +158,25 @@
     
     return YES;
 }
-
+/*
+      [_ptpSource releaseDecode];
+        [_decoder stopDecode];
+        _ptpSource = nil;
+        _decoder = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ProgressHUD dismiss];
+        });
+        PTPSource *ptpSource = [[PTPSource alloc] initWithNo:self.strNO name:self.strDevName channel:self.nChannel codeType:nCode];
+        _ptpSource = ptpSource;
+        self.nCodeType = nCode;
+        _ptpSource.nCodeType = nCode;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            [__self initDecodeInfo:__self.ptpSource];
+        
+        });
+ 
+ 
+ */
 
 
 /*

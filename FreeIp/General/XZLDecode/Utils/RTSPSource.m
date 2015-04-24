@@ -69,12 +69,13 @@
         if (nRef>=0)
         {
             NSData *data = [NSData dataWithBytes:packet.data length:packet.size];
-            av_free_packet(&packet);
             if (bRecord)
             {
                 [fileHandle writeData:data];
                 [fileHandle seekToEndOfFile];
+                nAllCount++;
             }
+            av_free_packet(&packet);
             return data;
         }
         else
@@ -112,6 +113,10 @@
 
 -(void)dealloc
 {
+    if(bRecord)
+    {
+        [self stopRecording];
+    }
     if(pFormatContext)
     {
         avformat_close_input(&pFormatContext);

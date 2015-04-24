@@ -223,6 +223,7 @@
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
                     [__self startPlay];
                 });
+                [[NSNotificationCenter defaultCenter] postNotificationName:NS_PLAY_VIEW_CLICK_VC object:self];
             }
             else
             {

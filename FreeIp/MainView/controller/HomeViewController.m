@@ -298,6 +298,10 @@
     {
         if (!playControl.bRecording)
         {
+            if (![playControl recordStart]) {
+                [viewPlay makeToast:@"录像失败"];
+                return ;
+            }
             btnSender.selected = YES;
             [playControl recordStart];
             [viewPlay setRecording:YES];
@@ -858,8 +862,18 @@ NSComparator cmptr = ^(id obj1, id obj2)
 {
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+    [self setBtnEnable];
 }
+
+-(void)setBtnEnable
+{
+    downView.btnBD.enabled = NO;
+    downView.btnHD.enabled = NO;
+    downView.btnCapture.enabled = NO;
+    downView.btnRecord.enabled = NO;
+    downView.btnStop.enabled = NO;
+}
+
 
 -(void)switchBtn:(UIButton *)btnSender
 {
@@ -957,7 +971,7 @@ NSComparator cmptr = ^(id obj1, id obj2)
             playControl.bRecording = NO;
             __weak VideoView *__videoView = video;
             dispatch_async(dispatch_get_main_queue(), ^{
-                    [__videoView setRecording:NO];
+                  [__videoView setRecording:NO];
             });
         }
         video.strNO = nil;
@@ -968,7 +982,7 @@ NSComparator cmptr = ^(id obj1, id obj2)
         });
         dispatch_async(dispatch_get_main_queue(),
         ^{
-               [__playControl.view removeFromSuperview];
+            [__playControl.view removeFromSuperview];
         });
         dispatch_group_wait(group,DISPATCH_TIME_FOREVER);
         DLog(@"delete:%@",playControl.strKey);

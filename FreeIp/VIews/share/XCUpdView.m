@@ -104,6 +104,8 @@
 {
     [[self viewWithTag:10089] addSubview:_txtNewPwd];
     [[self viewWithTag:10089] addSubview:_txtConPwd];
+    [_txtNewPwd setText:@""];
+    [_txtConPwd setText:@""];
     _txtNewPwd.secureTextEntry = YES;
     _txtField.secureTextEntry = YES;
     _txtConPwd.secureTextEntry = YES;

@@ -473,7 +473,7 @@
     
     NSInteger nLength = nInfo+nRecord;
     NSInteger nRow = (nLength%4== 0) ? (nLength/4) : (nLength/4 + 1);
-    return 4+nRow * 144;
+    return 4+nRow * 172;
 }
 
 -(void)calendarView:(VRGCalendarView *)calendarView switchedToMonth:(int)month targetHeight:(float)targetHeight animated:(BOOL)animated

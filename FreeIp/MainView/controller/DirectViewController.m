@@ -172,7 +172,8 @@
     {
         return ;
     }
-    if ([pinchSender numberOfTouches]!=2) {
+    if ([pinchSender numberOfTouches]!=2)
+    {
         return ;
     }
     VideoView *video = (VideoView*) pinchSender.view;
@@ -371,23 +372,29 @@
 
 -(void)recordingDirect:(UIButton *)btnSender
 {
-    NSString *strNO = ((VideoView*)aryView[_nIndex]).strNO;
+    VideoView *video = (VideoView *)aryView[_nIndex];
+    NSString *strNO = video.strNO;
     PlayViewController *model = [_aryModel objectForKey:strNO];
     if (model)
     {
         if (!btnSender.selected)
         {
+            if(![model recordStart])
+            {
+                [video makeToast:XCLocalized(@"recordFail")];
+                return ;
+            }
             btnSender.selected = YES;
-            [model recordStart];
+            [video setRecording:YES];
         }
         else
         {
             btnSender.selected = NO;
             [model recordStop];
+            [video setRecording:NO];
         }
     }
 }
-
 
 -(void)captureInfo:(UIButton *)btnSender
 {
@@ -771,8 +778,18 @@
         return ;
     }
     __weak PlayViewController *__playView = playView;
+    
+    
     VideoView *video = (VideoView*)playView.view.superview;
     video.strNO = nil; //干掉strPath
+    __weak VideoView *__view = video;
+    if (playView.bRecording)
+    {
+        [playView recordStop];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [__view setRecording:NO];
+        });
+    }
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_async(group, dispatch_get_main_queue(),^{
         [__playView stopPlay];//销毁解码器操作
@@ -780,7 +797,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [__playView.view removeFromSuperview];
     });
-    __weak VideoView *__view = video;
     dispatch_async(dispatch_get_main_queue(),
     ^{
         [__view makeToast:XCLocalized(@"Disconnect")];
@@ -947,8 +963,13 @@
         __weak PlayViewController *__model = model;
         VideoView *video = (VideoView*)model.view.superview;
         video.strNO = nil;
+        __weak VideoView *__video = video;
         dispatch_async(dispatch_get_main_queue(),
         ^{
+             if (__model.bRecording)
+             {
+                [__video setRecording:NO];
+             }
              [__model.view removeFromSuperview];
         });
         dispatch_group_t group = dispatch_group_create();
@@ -977,7 +998,7 @@
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(directDisConnectView:) name:NSCONNECT_P2P_DISCONNECT object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailDirect:) name:NS_CLOSE_PRIVATE_VC object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailDirect:) name:NS_CLOSE_DIRECT_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clickViewForNotify:) name:NS_PLAY_VIEW_CLICK_VC object:nil];
 }
 

@@ -26,8 +26,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _imgView = [[UIImageView alloc] initWithFrame:Rect(0,0, frame.size.width, 90)];
-        _viewInfo = [[UIView alloc] initWithFrame:Rect(0, 88, frame.size.width, 54)];
+        _imgView = [[UIImageView alloc] initWithFrame:Rect(0,0, frame.size.width, 120)];
+        _viewInfo = [[UIView alloc] initWithFrame:Rect(0, 118, frame.size.width, 54)];
         
         _imgSelect = [[UIImageView alloc] initWithFrame:self.bounds];
         _imgSelect.image = [UIImage imageNamed:@"default_select"];
