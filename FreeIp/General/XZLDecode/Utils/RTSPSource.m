@@ -128,6 +128,7 @@
     {
         recordModel = nil;
     }
+    nAllCount = 0;
     DLog(@"strpath;%@",self.strPath);
     recordModel = [[RecordModel alloc] init];
     recordModel.imgFile = strFile;

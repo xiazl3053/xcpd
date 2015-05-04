@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D5421591AEE0FB70052A964 /* VersionCheckService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D5421581AEE0FB70052A964 /* VersionCheckService.m */; };
 		4DA2BFDB1AE663F8002F46CD /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD71AE663F8002F46CD /* libavcodec.a */; };
 		4DA2BFDC1AE663F8002F46CD /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD81AE663F8002F46CD /* libavformat.a */; };
 		4DA2BFDD1AE663F8002F46CD /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD91AE663F8002F46CD /* libavutil.a */; };
@@ -108,7 +109,7 @@
 		BBB902C21ABFB178001D37BE /* PlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB902C11ABFB178001D37BE /* PlayViewController.m */; };
 		BBB902C51ABFDAC6001D37BE /* VideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB902C41ABFDAC6001D37BE /* VideoView.m */; };
 		BBCFA25C1ACD388000C83D49 /* RecordingService.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCFA25B1ACD388000C83D49 /* RecordingService.m */; };
-		BBD3B12D1ABA75340069FF02 /* IndexViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD3B12A1ABA75340069FF02 /* IndexViewController.m */; };
+		BBD3B12D1ABA75340069FF02 /* IndexViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BBD3B12A1ABA75340069FF02 /* IndexViewController.mm */; };
 		BBD3B1301ABA76AA0069FF02 /* XCTabPd.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD3B12F1ABA76AA0069FF02 /* XCTabPd.m */; };
 		BBD3B1331ABA785C0069FF02 /* XCButtonPd.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD3B1321ABA785C0069FF02 /* XCButtonPd.m */; };
 		BBD3B1361ABA902F0069FF02 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD3B1351ABA902F0069FF02 /* HomeViewController.m */; };
@@ -190,6 +191,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4D5421571AEE0FB70052A964 /* VersionCheckService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionCheckService.h; sourceTree = "<group>"; };
+		4D5421581AEE0FB70052A964 /* VersionCheckService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VersionCheckService.m; sourceTree = "<group>"; };
 		4DA2BFD71AE663F8002F46CD /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = libs/libavcodec.a; sourceTree = "<group>"; };
 		4DA2BFD81AE663F8002F46CD /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = libs/libavformat.a; sourceTree = "<group>"; };
 		4DA2BFD91AE663F8002F46CD /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = libs/libavutil.a; sourceTree = "<group>"; };
@@ -374,7 +377,7 @@
 		BBCFA25A1ACD388000C83D49 /* RecordingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordingService.h; path = kxMovie/RecordingService.h; sourceTree = "<group>"; };
 		BBCFA25B1ACD388000C83D49 /* RecordingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecordingService.m; path = kxMovie/RecordingService.m; sourceTree = "<group>"; };
 		BBD3B1291ABA75340069FF02 /* IndexViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexViewController.h; sourceTree = "<group>"; };
-		BBD3B12A1ABA75340069FF02 /* IndexViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndexViewController.m; sourceTree = "<group>"; };
+		BBD3B12A1ABA75340069FF02 /* IndexViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexViewController.mm; sourceTree = "<group>"; };
 		BBD3B12E1ABA76AA0069FF02 /* XCTabPd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCTabPd.h; sourceTree = "<group>"; };
 		BBD3B12F1ABA76AA0069FF02 /* XCTabPd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCTabPd.m; sourceTree = "<group>"; };
 		BBD3B1311ABA785C0069FF02 /* XCButtonPd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCButtonPd.h; sourceTree = "<group>"; };
@@ -725,6 +728,8 @@
 				BB95F04F1ACAB27400EC0433 /* UploadImageService.m */,
 				BB95F0501ACAB27400EC0433 /* UserInfoService.h */,
 				BB95F0511ACAB27400EC0433 /* UserInfoService.m */,
+				4D5421571AEE0FB70052A964 /* VersionCheckService.h */,
+				4D5421581AEE0FB70052A964 /* VersionCheckService.m */,
 			);
 			path = http;
 			sourceTree = "<group>";
@@ -865,7 +870,7 @@
 			isa = PBXGroup;
 			children = (
 				BBD3B1291ABA75340069FF02 /* IndexViewController.h */,
-				BBD3B12A1ABA75340069FF02 /* IndexViewController.m */,
+				BBD3B12A1ABA75340069FF02 /* IndexViewController.mm */,
 				BBD3B1341ABA902F0069FF02 /* HomeViewController.h */,
 				BBD3B1351ABA902F0069FF02 /* HomeViewController.m */,
 				BBD3B1371ABA90410069FF02 /* DeviceViewController.h */,
@@ -1547,6 +1552,7 @@
 				BBB902BF1ABFB119001D37BE /* P2PPlayViewController.m in Sources */,
 				BBDC50CD1AB81A7600C81D00 /* UIScrollView+Extension.m in Sources */,
 				BBDC50CB1AB81A7600C81D00 /* MJRefreshFooterView.m in Sources */,
+				4D5421591AEE0FB70052A964 /* VersionCheckService.m in Sources */,
 				BB9F46F21AB9621F002AF594 /* UIView+Hierarchy.m in Sources */,
 				BB95F06F1ACAB27400EC0433 /* DeviceService.m in Sources */,
 				BBD3B1331ABA785C0069FF02 /* XCButtonPd.m in Sources */,
@@ -1593,7 +1599,7 @@
 				BBDC50F11AB81A7600C81D00 /* ProgressHUD.m in Sources */,
 				BB95F06B1ACAB27400EC0433 /* RecordDb.m in Sources */,
 				BBDC50B61AB81A7600C81D00 /* private_protocol.m in Sources */,
-				BBD3B12D1ABA75340069FF02 /* IndexViewController.m in Sources */,
+				BBD3B12D1ABA75340069FF02 /* IndexViewController.mm in Sources */,
 				BBDC50B91AB81A7600C81D00 /* UIView+screenshot.m in Sources */,
 				BB9F47711AB97D05002AF594 /* RecordModel.m in Sources */,
 				BB9F46EE1AB9621F002AF594 /* IQSegmentedNextPrevious.m in Sources */,

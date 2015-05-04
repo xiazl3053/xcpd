@@ -58,6 +58,7 @@
 
 +(BOOL)stopRecordInfo:(RecordModel *)record
 {
+    
     if (!record)
     {
         return NO;
@@ -76,8 +77,8 @@
     record.strEndTime = [NSString stringWithFormat:@"%@",morelocationString];
     record.allTime = 0;
     DLog(@"录像结束%d",(int)record.nFramesNum);
-    [RecordDb insertRecord:record];
-    
+    BOOL bReturn = [RecordDb insertRecord:record];
+    DLog(@"插入结果:%d",bReturn);
     return YES;
 }
 

@@ -214,7 +214,6 @@ static NSString * formatTimeInterval(CGFloat seconds, BOOL isLeft)
     {
         [self updatePosition];
     }
-//    DLog(@"pts:%f",[_decoder getPosition]);
 }
 
 -(void)playSwitch:(UIButton *)sender

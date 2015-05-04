@@ -226,9 +226,23 @@
                 [recv->aryVideo removeObjectAtIndex:0];
                 if (bRecord)
                 {
-                    [fileHandle writeData:data];
-                    [fileHandle seekToEndOfFile];
-                    nAllCount ++;
+                    unsigned char *cByte=(unsigned char*)malloc(6);
+                    [data getBytes:cByte length:6];
+                    if(cByte[4]==0x67)
+                    {
+                        DLog(@"psp Frame!");
+                        nAllCount ++;
+                    }
+                    else if(cByte[4]==0x61 && nAllCount>0)
+                    {
+                        DLog(@"p FRAME");
+                        nAllCount ++;
+                    }
+                    if(nAllCount!=0)
+                    {
+                        [fileHandle writeData:data];
+                        [fileHandle seekToEndOfFile];
+                    }
                 }
                 return data;
             }
@@ -326,6 +340,7 @@
     DLog(@"strpath;%@",self.strPath);
     recordModel = [[RecordModel alloc] init];
     recordModel.imgFile = strFile;
+    nAllCount = 0;
     recordModel.strDevName = self.strName;
     if([RecordingService startRecordInfo:recordModel])
     {
@@ -338,7 +353,6 @@
         
         bRecord = YES;
     }
-    nAllCount ++;
 }
 
 -(void)stopRecording

@@ -247,7 +247,7 @@
 "networkstatusWIFI"="Current network:WIFI";
 "networkstatusNO"="No network";
 "oldPwdError"="Old password error";
-"connectionDevice"="The current channle is Establishing P2P connection";
+"connectionDevice"="The current channle is Establishing a connection";
 "reconnect"="Reconnect the device";
 "devUpdOK"="Successfully updated";
 "editor"="Edit";

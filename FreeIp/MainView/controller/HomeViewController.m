@@ -744,9 +744,11 @@ NSComparator cmptr = ^(id obj1, id obj2)
 -(void)changeVideoview:(P2PPlayViewController *)playControl video:(VideoView *)newVideo
 {
     VideoView *oldView = (VideoView*)playControl.view.superview;
+    DLog(@"changeVideo:%@",oldView.strNO);
     oldView.strNO = nil;
     [playControl.view removeFromSuperview];
     [playControl setFrame:newVideo.frame];
+    newVideo.strNO = playControl.strKey;
     [newVideo addSubview:playControl.view];
 }
 
@@ -837,7 +839,9 @@ NSComparator cmptr = ^(id obj1, id obj2)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ptpDisConnect:) name:NSCONNECT_P2P_DISCONNECT object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playNotifyClick:) name:NS_PLAY_VIEW_CLICK_VC object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector() name:NS_APPLITION_ENTER_BACK object:nil];
 }
+
 
 -(void)playNotifyClick:(NSNotification *)notify
 {
@@ -933,7 +937,8 @@ NSComparator cmptr = ^(id obj1, id obj2)
 
 -(void)doubleClickVideo:(id)sender
 {
-    if (bFull) {
+    if (bFull)
+    {
         [self setFourHomeView];
     }
     else
@@ -957,9 +962,18 @@ NSComparator cmptr = ^(id obj1, id obj2)
 {
     return UIInterfaceOrientationMaskLandscapeRight;
 }
+#pragma mark 删除所有的视频框子控件
+-(void)removeAllVideoSon
+{
+    for (VideoView *video in aryView) {
+        for (UIView * view in video.subviews) {
+            [view removeFromSuperview];
+        }
+    }
+}
 
 #pragma mark 关闭所有视频
--(void)closeAllView
+-(void)closeAllView:(BOOL)bFlag
 {
     for (P2PPlayViewController *playControl in [dict allValues])
     {
@@ -974,19 +988,22 @@ NSComparator cmptr = ^(id obj1, id obj2)
                   [__videoView setRecording:NO];
             });
         }
-        video.strNO = nil;
         dispatch_group_t group = dispatch_group_create();
         dispatch_group_async(group,dispatch_get_global_queue(0, 0),
         ^{
             [__playControl stopPlay];
         });
-        dispatch_async(dispatch_get_main_queue(),
-        ^{
-            [__playControl.view removeFromSuperview];
-        });
+        if(bFlag)
+        {
+            dispatch_async(dispatch_get_main_queue(),
+            ^{
+                [__playControl.view removeFromSuperview];
+            });
+        }
         dispatch_group_wait(group,DISPATCH_TIME_FOREVER);
         DLog(@"delete:%@",playControl.strKey);
         [dict removeObjectForKey:playControl.strKey];
+        video.strNO = nil;
     }
     DLog(@"%@",[dict allKeys]);
 }

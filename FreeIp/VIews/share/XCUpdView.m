@@ -59,11 +59,12 @@
     _txtField = [[UITextField alloc] initWithFrame:Rect(40, 51, frame.size.width-80, 52)];
     UIView *leftView = [[UIView alloc] initWithFrame:Rect(0, 0, 20, 52)];
     _txtField.leftView = leftView;
-    _txtField.keyboardType = UIKeyboardTypeDefault;
+//    _txtField.keyboardType = UIKeyboardTypeASCIICapable;
     _txtField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    _txtField.autocorrectionType = UITextAutocorrectionTypeNo;
     _txtField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     _txtField.leftViewMode = UITextFieldViewModeAlways;
-    _txtField.keyboardType = UIKeyboardTypePhonePad;
+    _txtField.keyboardType = UIKeyboardTypeDefault;
     [_txtField setFont:XCFONT(16.0)];
     [view addSubview:_txtField];
     [_txtField setBackgroundColor:[UIColor whiteColor]];

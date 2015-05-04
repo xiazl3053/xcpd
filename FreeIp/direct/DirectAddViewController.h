@@ -10,4 +10,6 @@
 
 @interface DirectAddViewController : UIViewController
 
+-(id)initWithType:(BOOL)bType;
+
 @end

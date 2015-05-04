@@ -216,7 +216,7 @@
 "networkstatus3G"="Rede atual:móvel";
 "networkstatusWIFI"="Rede atual: WIFI";
 "networkstatusNO"="Sem rede";
-"connectionDevice"="O quadro de vídeo atual é conexão p2p estabelecido";
+"connectionDevice"="O canal é o de estabelecer uma conexão";
 "reconnect"="Volte a ligar o dispositivo";
 "devUpdOK"="atualizados com sucesso";
 "editor"="Editar";

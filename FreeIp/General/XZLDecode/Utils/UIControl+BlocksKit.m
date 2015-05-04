@@ -53,9 +53,10 @@ static const void *BKControlHandlersKey = &BKControlHandlersKey;
 	NSParameterAssert(handler);
 	
 	NSMutableDictionary *events = objc_getAssociatedObject(self, BKControlHandlersKey);
-	if (!events) {
-		events = [NSMutableDictionary dictionary];
-		objc_setAssociatedObject(self, BKControlHandlersKey, events, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+	if (!events)
+    {
+	    events = [NSMutableDictionary dictionary];
+        objc_setAssociatedObject(self, BKControlHandlersKey, events, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	}
 
 	NSNumber *key = @(controlEvents);

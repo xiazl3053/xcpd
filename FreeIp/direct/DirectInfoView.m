@@ -69,7 +69,8 @@
     segChannel.frame = Rect(frame.size.width-300,260,280,30);
     segChannel.selectedSegmentIndex = 0;//设置默认选择项索引
     segChannel.segmentedControlStyle = UISegmentedControlStyleBezeled;
-    
+    [self setDevType:0];
+    [txtPort setKeyboardType:UIKeyboardTypeNumberPad];
     [txtName setText:@"IPC_1"];
 
     [self addSubview:lblName];
@@ -158,7 +159,15 @@
     
 }
 
-
+-(void)setTxtNil
+{
+    txtName.text  = @"";
+    txtAddress.text = @"";
+    txtPort.text = @"";
+    txtUser.text = @"";
+    txtPwd.text = @"";
+    
+}
 
 
 -(BOOL)addDirect
@@ -192,20 +201,17 @@
         
         [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
         [UIView setAnimationDelay:0.5f];
-        self.superview.frame = Rect(0, -50, self.superview.width, self.superview.height);
-//        self.frame = CGRectMake(0.0f, -50, self.width, self.height);
+        self.superview.superview.frame = Rect(0, -50, self.superview.width, self.superview.height);
         [UIView commitAnimations];
     }
-    
 }
 
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
-        [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-        [UIView setAnimationDelay:0.5f];
-//        self.frame = CGRectMake(0.0f, 0, self.width, self.height);
-        self.superview.frame = Rect(0, 0, self.superview.width, self.superview.height);
-        [UIView commitAnimations];
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDelay:0.5f];
+    self.superview.superview.frame = Rect(0, 0, self.superview.width, self.superview.height);
+    [UIView commitAnimations];
 }
 
 //

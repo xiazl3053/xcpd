@@ -24,7 +24,7 @@
     [self.contentView addSubview:imgStatus];
     imgStatus.tag = 10002;
     
-    UILabel *lblDevName = [[UILabel alloc] initWithFrame:Rect(106,21, 200, 13)];
+    UILabel *lblDevName = [[UILabel alloc] initWithFrame:Rect(106,21, 144, 13)];
     [self.contentView addSubview:lblDevName];
     [lblDevName setTextColor:RGB(48, 48,48)];
     [lblDevName setFont:XCFONT(13.0f)];

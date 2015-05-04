@@ -8,6 +8,7 @@
 
 #import "DirectViewController.h"
 #import "UtilsMacro.h"
+#import "DirectAddViewController.h"
 #import "XCHIddenView.h"
 #import "XCBtnChannel.h"
 #import "UIView+Extension.h"
@@ -38,7 +39,7 @@
     UIView *_sonView;
     UILabel *_borderLabel;
     PlayDownView *downView;
-    
+    DirectAddViewController *directAdd;
     UIView *grayView;
     NSInteger _nIndex;
     DirectAddView *addView;
@@ -300,15 +301,19 @@
     _borderLabel.hidden = NO;
 }
 
+//添加设备
+#pragma mark 添加设备－－修改
 -(void)setAddModel
 {
-    for (UIView *view in _sonView.subviews)
+//    for (UIView *view in _sonView.subviews)
+//    {
+//        [view removeFromSuperview];
+//    }
+    if(directAdd==nil)
     {
-        [view removeFromSuperview];
+        directAdd = [[DirectAddViewController alloc] init];
     }
-    addView = [[DirectAddView alloc] initWithFrame:_sonView.bounds];
-    [_sonView addSubview:addView];
-    addView.delegate = self;
+    [_sonView addSubview:directAdd.view];
 }
 
 -(void)closeDirectView
@@ -563,12 +568,10 @@
         [_aryTable setObject:[_aryRtsp objectAtIndex:indexPath.row] forKey:indexPath];
         return ;
     }
-   
     //DVR的情况
     //明日工作内容:
     //1:对这类加入一个字典集合   包含一个PlayViewController 的父类
     //1.先查看strKey  是否已经存在
-    
     
     RtspInfo *rtspInfo = (RtspInfo*)[_aryRtsp objectAtIndex:indexPath.row];
     if(![rtspInfo.strType isEqualToString:@"IPC"])
@@ -630,6 +633,7 @@
     oldView.strNO = nil;
     [playView.view removeFromSuperview];
     VideoView *newView = aryView[_nIndex];
+    newView.strNO = playView.strKey;
     [playView setFrame:newView.frame];
     [newView addSubview:playView.view];
     return YES;
@@ -676,14 +680,6 @@
     if([rtspInfo.strType isEqualToString:@"DVR"])
     {
         strPath = [NSString stringWithFormat:@"%@@%d@%@@%@@%d",rtspInfo.strAddress,(int)rtspInfo.nPort,rtspInfo.strUser,rtspInfo.strPwd,nChannel];
-
-//        if([self changeVideoView:strPath])
-//        {
-//            //执行替换视频动作
-//            [aryView[_nIndex] makeToast:@"当前视频框正在建立连接"];
-//            return ;
-//        }
-//        playViewController = [[PrivatePlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
     }
     else
     {
@@ -696,15 +692,6 @@
         {
             strPath = [NSString stringWithFormat:@"rtsp://%@%@:%d/%d1",strAdmin,rtspInfo.strAddress,(int)rtspInfo.nPort,nChannel];
         }
-//        DLog(@"strPath:%@",strPath);
-//        if([self changeVideoView:strPath])
-//        {
-//            [aryView[_nIndex] makeToast:@"当前视频正在建立连接"];
-//            return ;
-//        }
-//        playViewController = [[RTSPPlayViewController alloc] initWithPath:strPath name:rtspInfo.strDevName];
-//        rtspInfo.nRequest = nChannel;
-//        playViewController.rtsp = rtspInfo;
     }
     DLog(@"请求:%@",strPath);
     
@@ -719,7 +706,7 @@
     if (![self checkStopVideo:curVideo])
     {
         DLog(@"curVideo:%@",curVideo.strNO);
-        [curVideo makeToast:@"当前视频框正在建立连接"];
+        [curVideo makeToast:XCLocalized(@"connectionDevice")];
         return ;
     }
     
@@ -756,16 +743,17 @@
         return ;
     }
     VideoView *video = (VideoView*)playView.view.superview;
-    video.strNO = nil; // 关闭STRNO
     __weak PlayViewController *__playView = playView;
     dispatch_async(dispatch_get_main_queue(), ^{
         [__playView.view removeFromSuperview];
     });
+    DLog(@"关闭一路视频:%@",video.strNO);
     __weak VideoView *__view = video;
     dispatch_async(dispatch_get_main_queue(),
     ^{
         [__view makeToast:XCLocalized(@"connectFail") duration:1.5 position:@"center"];
     });
+    video.strNO = nil; // 关闭STRNO
     [_aryModel removeObjectForKey:strKey];
 }
 
@@ -781,7 +769,6 @@
     
     
     VideoView *video = (VideoView*)playView.view.superview;
-    video.strNO = nil; //干掉strPath
     __weak VideoView *__view = video;
     if (playView.bRecording)
     {
@@ -801,11 +788,12 @@
     ^{
         [__view makeToast:XCLocalized(@"Disconnect")];
     });
-    DLog(@"中断链接:%@",strKey);
+    
+    DLog(@"中断链接:%@",video.strNO);
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
     [_aryModel removeObjectForKey:strKey];
-     
-    
+    video.strNO = nil; //干掉strPath
+    DLog(@"剩余的key%@",[_aryModel allKeys]);
 }
 
 
@@ -842,7 +830,6 @@
     downView.btnRecord.enabled = NO;
     downView.btnCapture.enabled = NO;
     downView.btnStop.enabled = NO;
-    
 }
 
 #pragma mark 解析  VideoView
@@ -1000,6 +987,13 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectDVR:) name:NS_CONNECT_DVR_CHANNEL_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectFailDirect:) name:NS_CLOSE_DIRECT_VC object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clickViewForNotify:) name:NS_PLAY_VIEW_CLICK_VC object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDirectList) name:NS_DIRECT_UPDATE_LIST_VC object:nil];
+}
+
+-(void)updateDirectList
+{
+    [self setPlayModel];
+    [self updateData];
 }
 
 -(void)clickViewForNotify:(NSNotification *)notify

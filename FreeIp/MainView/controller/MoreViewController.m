@@ -29,9 +29,10 @@
 #import "XCUpdView.h"
 #import "ProgressHUD.h"
 #import "UpdEmailService.h"
+#import "VersionCheckService.h"
 #import "UpdPwdService.h"
 
-@interface MoreViewController ()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,XCUpdViewDelegate,XCUserInfoViewDelegate,XCDetailsDelegate>
+@interface MoreViewController ()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,XCUpdViewDelegate,XCUserInfoViewDelegate,XCDetailsDelegate,VersionCheckDelegate>
 {
     UserInfoService *userService;
     UIButton *btnLogout;
@@ -39,6 +40,7 @@
     CGFloat fWidth,fHeight;
     UIView *_sonView;
     int nUpdType;
+    VersionCheckService *versionService;
     ImageViewController *_imgViewController;
     XCUpdView *updView;
     RecordViewController *_recordViewController;
@@ -727,11 +729,21 @@
 
 -(void)setViewVersion
 {
-    XCVersionView *versionView = [[XCVersionView alloc] initWithFrame:Rect(0, 0, fWidth-kHomeListWidth-1, fHeight)];
+    XCVersionView *versionView = [[XCVersionView alloc] initWithFrame:Rect(0, 0, fWidth-kHomeListWidth-1-72, fHeight)];
     [_sonView addSubview:versionView];
+    versionView.delegate = self;
 }
 
-
-
-
+-(void)requestVersion
+{
+    DLog(@"version check!");
+    if (versionService == nil) {
+        versionService = [[VersionCheckService alloc] init];
+    }
+    versionService.httpBlock = ^(NSString *strVersion)
+    {
+        DLog(@"strVersion:%@",strVersion);
+    };
+    [versionService requestVersion];
+}
 @end

@@ -13,6 +13,8 @@
 -(void)setPlayModel;
 -(void)setDevInfo;
 
--(void)closeAllView;
+-(void)closeAllView:(BOOL)bFlag;
+
+-(void)removeAllVideoSon;
 
 @end

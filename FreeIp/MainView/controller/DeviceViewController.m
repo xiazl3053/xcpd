@@ -190,6 +190,13 @@
             });
         }
     };
+    
+    NSString *strName = [nameView.txtField.text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    DLog(@"strName:%@",strName);
+//    if ([strName replacementObjectForCoder:<#(NSCoder *)#>]) {
+//        <#statements#>
+//    }
+    
     [updService requestUpdName:_devInfo.strDevNO name:nameView.txtField.text];
 }
 
@@ -296,7 +303,8 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:NSUPDATE_DEVICE_LIST_VC object:nil];
         }
     };
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
         [ProgressHUD show:@"deleteDevice"];
     });
     [delService requestDelDevInfo:_devInfo.strDevNO auth:_devInfo.strDevAuth];

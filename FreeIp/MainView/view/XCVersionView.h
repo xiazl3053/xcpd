@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol VersionCheckDelegate <NSObject>
+
+-(void)requestVersion;
+
+@end
+
+
+
 @interface XCVersionView : UIView
+
+
+@property (nonatomic,assign) id<VersionCheckDelegate> delegate;
+
 
 @end

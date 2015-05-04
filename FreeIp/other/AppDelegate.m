@@ -14,6 +14,13 @@
 #import "Toast+UIView.h"
 #import "UtilsMacro.h"
 @interface AppDelegate ()
+{
+    BOOL bStatus;
+    BOOL bGGLogin;
+}
+
+@property (nonatomic,unsafe_unretained) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
+@property (nonatomic,strong) NSTimer *myTimer;
 
 @end
 
@@ -78,27 +85,97 @@
 }
 
 
-- (void)applicationWillResignActive:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application
+{
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_ENTER_BACK object:nil];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+
+-(void)setEndBackground
+{
+    if (bStatus)
+    {
+        DLog(@"等待时间不够");
+        return ;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_ENTER_BACK object:nil];
+    
+    
+   
+    bGGLogin = YES;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    bStatus = NO;
+    self.backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:^(void)
+    {
+         [self endBackgroundTask];
+    }];
+    _myTimer = [NSTimer scheduledTimerWithTimeInterval:3.0f
+                                                target:self
+                                              selector:@selector(timerMethod:)
+                                              userInfo:nil
+                                               repeats:YES];
+    [self performSelector:@selector(setEndBackground) withObject:nil afterDelay:30.0f];
 }
 
+-(void)timerMethod:(NSTimer *)paramSender
+{
+    NSTimeInterval backgroundTimeRemaining =[[UIApplication sharedApplication] backgroundTimeRemaining];
+    if (backgroundTimeRemaining == DBL_MAX)
+    {
+        DLog(@"Background Time Remaining = Undetermined");
+    }
+    else
+    {
+        DLog(@"Background Time Remaining = %.02f Seconds", backgroundTimeRemaining);
+        if (backgroundTimeRemaining<110) {
+            [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskIdentifier];
+            self.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+        }
+    }
+}
+
+-(void)endBackgroundTask
+{
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    AppDelegate *weakSelf = self;
+    dispatch_async(mainQueue, ^(void) {
+        AppDelegate *strongSelf = weakSelf;
+        if (strongSelf != nil){
+            [strongSelf.myTimer invalidate];// 停止定时器
+            // 每个对 beginBackgroundTaskWithExpirationHandler:方法的调用,必须要相应的调用 endBackgroundTask:方法。这样，来告诉应用程序你已经执行完成了。
+            // 也就是说,我们向 iOS 要更多时间来完成一个任务,那么我们必须告诉 iOS 你什么时候能完成那个任务。
+            // 也就是要告诉应用程序：“好借好还”嘛。
+            // 标记指定的后台任务完成
+            [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTaskIdentifier];
+            // 销毁后台任务标识符
+            strongSelf.backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+        }
+    });
+}
+-(void)applicationWillEnterForeground:(UIApplication *)application
+{
+}
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_BECOME_ACTIVE object:nil];
+    DLog(@"返回");
+//    [self cancelPreviousPerformRequestsWithTarget:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_BECOME_ACTIVE object:nil];
+    bStatus = YES;
+    [self.myTimer invalidate];
+    if (bGGLogin)
+    {
+         //发送重新登录请求
+        [[NSNotificationCenter defaultCenter] postNotificationName:NS_APPLITION_BECOME_ACTIVE object:nil];
+    }
 }
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+    
 }
 
 @end

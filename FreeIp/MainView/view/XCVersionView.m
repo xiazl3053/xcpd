@@ -52,8 +52,26 @@
     [lblVersion setText:strInfo];
     [lblVersion setFont:XCFONT(20.0f)];
     [lblVersion setTextAlignment:NSTextAlignmentCenter];
+
+    UIButton *btnCheck = [UIButton buttonWithType: UIButtonTypeCustom];
+    [self addSubview:btnCheck];
     
+    [btnCheck setTitle:@"版本检测..." forState:UIControlStateNormal];
+    btnCheck.frame = Rect(50, lblVersion.frame.origin.y+50, frame.size.width-100, 45);
+    [btnCheck setBackgroundColor:RGB(234,98,84)];
+    btnCheck.titleLabel.font = XCFONT(17);
+    [btnCheck addTarget:self action:@selector(touchEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [btnCheck.layer setMasksToBounds:YES];
+    btnCheck.layer.cornerRadius = 5.0f;
     return self;
+}
+
+-(void)touchEvent:(UIButton *)sender
+{
+    if(_delegate)
+    {
+        [_delegate requestVersion];
+    }
 }
 
 @end

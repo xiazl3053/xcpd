@@ -12,7 +12,7 @@
 
 -(BOOL)addDirectView:(RtspInfo*)rtsp;
 
--(void)closeDirectView;
+//-(void)closeDirectView;
 
 @end
 
@@ -20,5 +20,9 @@
 
 @property (nonatomic,assign) id<DirectAddDelegate>  delegate;
 
+-(void)addRtspInfo;
+
+
+-(void)setTxtRtspNull;
 
 @end

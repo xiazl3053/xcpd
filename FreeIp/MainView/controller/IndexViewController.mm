@@ -20,7 +20,7 @@
 #import "LoginService.h"
 #import "DeviceInfoDb.h"
 #import "UserModel.h"
-
+#import "P2PInitService.h"
 
 @interface IndexViewController ()<XCTabBarDelegate>
 {
@@ -36,7 +36,8 @@
 
 -(void)connectAgain
 {
-    
+//    [homeView ]
+    [homeView removeAllVideoSon];
     UserModel *userModel = [[UserModel alloc] init];
     userModel.strUser = [UserInfo sharedUserInfo].strUser;
     userModel.strPwd = [UserInfo sharedUserInfo].strPwd;
@@ -48,10 +49,17 @@
     [loginService connectionHttpLogin:userModel.strUser pwd:userModel.strPwd];
 }
 
+-(void)enterBack
+{
+    [homeView closeAllView:NO];
+    [[P2PInitService sharedP2PInitService] setP2PSDKNull];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectAgain) name:NS_APPLITION_BECOME_ACTIVE object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterBack) name:NS_APPLITION_ENTER_BACK object:nil];
     if (IOS_SYSTEM_8) {
         fWindth = kScreenSourchWidth;
         fHeight = kScreenSourchHeight;
@@ -165,7 +173,7 @@
         }
         else
         {
-            [homeView closeAllView];
+            [homeView closeAllView:YES];
         }
         
         __weak UIViewController *__viewControl = viewController;

@@ -131,7 +131,7 @@ void* private_protocol_free(void *arg)
 void* private_protocol_stop(private_protocol_info_t **pStreamInfo)
 {
     
-	printf("private_protocol_stop!!\n");
+//	printf("private_protocol_stop!!\n");
 	int iRet=0;
 	if(NULL==(*pStreamInfo)) return NULL;
 	(*pStreamInfo)->run = 0;
@@ -538,8 +538,8 @@ int private_protocol_login(private_protocol_info_t *pStreamInfo, unsigned int ip
 
         sprintf((char*)userInfo.ucUsername,"%s",name);
         sprintf(passwdBuff,"%s",passwd);
-        DES_Encode((char*)userInfo.ucPassWord,passwdBuff,serialNum,16);
-        DES_Encode((char*)userInfo.ucSerialNum,serialNum,serialNum,ARG_SERIALNUM_LEN);
+        PP_DES_Encode((char*)userInfo.ucPassWord,passwdBuff,serialNum,16);
+        PP_DES_Encode((char*)userInfo.ucSerialNum,serialNum,serialNum,ARG_SERIALNUM_LEN);
         
         rsl = private_protocol_sendCmd(pStreamInfo,CMD_ACT_LOGIN,(char*)&userInfo,sizeof(USER_INFO),0,0);
         

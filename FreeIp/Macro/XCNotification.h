@@ -47,4 +47,7 @@
 #define NS_CLOSE_DIRECT_VC          @"NS_CLOSE_DIRECT_VC"
 //发送播放器击父窗口消息
 #define NS_PLAY_VIEW_CLICK_VC @"NS_PLAY_VIEW_CLICK_VC"
+
+#define NS_DIRECT_UPDATE_LIST_VC   @"NS_DIRECT_UPDATE_LIST_VC"
+
 #endif

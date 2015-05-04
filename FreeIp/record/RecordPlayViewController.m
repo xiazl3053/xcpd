@@ -63,7 +63,6 @@
     [self initTableView];
     playView = [[UIView alloc] initWithFrame:Rect(0, 64, 700,self.view.height-64)];
     [self.view addSubview:playView];
-//    [playView setBackgroundColor:RGB(0, 0, 0)];
 }
 
 -(void)initRecordView
@@ -239,21 +238,17 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     RecordModel *recordMo = [aryRecord objectAtIndex:indexPath.row];
-    if(recordMo.nFramesNum<30)
+    if(recordMo.nFramesNum<10)
     {
         [self.view makeToast:@""];
         DLog(@"wenjiantaiduan:%d",(int)recordMo.nFramesNum);
         return ;
     }
     [self stopVideo];
-  //  NSString *strKey = [NSString stringWithFormat:@"%@/record/%@",kLibraryPath,recordMo.strFile];
     //路径file path
-    
     for (UIView *view in playView.subviews) {
         [view removeFromSuperview];
     }
-    
-    
     _playViewCon = [[HistoryViewController alloc] initWithRecordInfo:recordMo];
     [_playViewCon setFrame:Rect(0, 0, 700, self.view.height-200)];
     [playView addSubview:_playViewCon.view];

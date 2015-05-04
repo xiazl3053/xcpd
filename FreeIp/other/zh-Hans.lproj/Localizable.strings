@@ -233,7 +233,7 @@
 "networkstatus3G"="当前网络:移动网络";
 "networkstatusWIFI"="当前网络:WIFI";
 "networkstatusNO"="没有网络";
-"connectionDevice"="当前通道正在建立P2P连接";
+"connectionDevice"="当前通道正在建立连接";
 "reconnect"="重新连接设备";
 "devUpdOK"="修改成功";
 "editor"="编辑";

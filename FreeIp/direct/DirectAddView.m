@@ -12,15 +12,6 @@
 
 @implementation DirectAddView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
-
 -(void)createHeadView:(NSString *)strName
 {
     UIView *view = [[UIView alloc] initWithFrame:Rect(0, 0, self.frame.size.width, 64)];
@@ -50,17 +41,29 @@
     [btnCancel addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
     [view addSubview:btnCancel];
     btnCancel.frame = Rect(25, 10, 60,44);
-    
 }
 
 -(void)closeView
 {
-    if (_delegate && [_delegate respondsToSelector:@selector(closeDirectView)]) {
-        [_delegate closeDirectView];
+//    if (_delegate && [_delegate respondsToSelector:@selector(closeDirectView)]) {
+//        [_delegate closeDirectView];
+//    }
+}
+
+-(void)setTxtRtspNull
+{
+    DirectInfoView *direct = ((DirectInfoView*)[self viewWithTag:10001]);
+    if (direct)
+    {
+        [direct setTxtNil];
+    }
+    else
+    {
+        
     }
 }
 
--(void)saveInfo
+-(void)addRtspInfo
 {
     DirectInfoView *direct = ((DirectInfoView*)[self viewWithTag:10001]);
     if ([direct addDirect])
@@ -96,8 +99,6 @@
     
     [self setBackgroundColor:RGB(246, 249, 250)];
     
-    [self createHeadView:XCLocalized(@"addrtsp")];
-    
     [self createBody];
     
     return self;
@@ -105,10 +106,9 @@
 
 -(void)createBody
 {
-
     NSArray *array = [[NSArray alloc] initWithObjects:@"IPC",@"DVR",@"NVR", nil];
     UISegmentedControl *segType = [[UISegmentedControl alloc]initWithItems:array];
-    segType.frame = CGRectMake(23.0, 103, self.width-46, 30.0);
+    segType.frame = CGRectMake(23.0, 30, self.width-46, 30.0);
     segType.selectedSegmentIndex = 0;//设置默认选择项索引
     segType.segmentedControlStyle = UISegmentedControlStyleBezeled;
     segType.tag = 10009;

@@ -434,7 +434,7 @@
         [self.view makeToast:XCLocalized(@"UsernameAlready")];
         return;
     }
-    if ([DecodeJson validateEmail:strName]) {
+    if (![DecodeJson validateEmail:strName]) {
         [self.view makeToast:XCLocalized(@"emailError")];
         return ;
     }

@@ -298,6 +298,7 @@ int getVideoFrame(void *userData,unsigned char *cFrame,int nLength)
     recordModel = [[RecordModel alloc] init];
     recordModel.imgFile = strFile;
     recordModel.strDevName = self.strName;
+    nAllCount = 0;
     if([RecordingService startRecordInfo:recordModel])
     {
         if(fileHandle)

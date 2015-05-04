@@ -16,4 +16,6 @@
 
 -(BOOL)addDirect;
 
+-(void)setTxtNil;
+
 @end
