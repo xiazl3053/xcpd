@@ -22,6 +22,7 @@
 
 -(void)addRtspInfo;
 
+-(void)setRtspInfo:(RtspInfo *)rtsp;
 
 -(void)setTxtRtspNull;
 

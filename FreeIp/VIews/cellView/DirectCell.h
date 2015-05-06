@@ -8,9 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "RtspInfo.h"
+
+@protocol DirectCellDelegate <NSObject>
+
+-(void)tapEventUpdata:(NSInteger)nRtspRow;
+
+@end
+
+
 @interface DirectCell : UITableViewCell
 
+@property (nonatomic,assign) id<DirectCellDelegate> delegate;
 @property (nonatomic,assign) BOOL bSon;
+@property (nonatomic,assign) NSInteger nRow;
+
+
 
 -(void)setDeviceInfo:(RtspInfo *)devInfo;
 -(void)addLine;

@@ -50,16 +50,44 @@
 //    }
 }
 
+-(void)setRtspInfo:(RtspInfo *)rtsp
+{
+    DirectInfoView *direct = ((DirectInfoView*)[self viewWithTag:10001]);
+    if (direct)
+    {
+        UISegmentedControl* segControl = ((UISegmentedControl*)[self viewWithTag:10009]);
+        if ([rtsp.strType isEqualToString:@"IPC"])
+        {
+            [segControl setSelectedSegmentIndex:0];
+            [segControl setEnabled:NO forSegmentAtIndex:1];
+            [segControl setEnabled:NO forSegmentAtIndex:2];
+ 
+        }
+        else if([rtsp.strType isEqualToString:@"DVR"])
+        {
+            [segControl setSelectedSegmentIndex:1];
+            [segControl setEnabled:NO forSegmentAtIndex:0];
+            [segControl setEnabled:NO forSegmentAtIndex:2];
+        }
+        else
+        {
+            [segControl setSelectedSegmentIndex:2];
+            [segControl setEnabled:NO forSegmentAtIndex:0];
+            [segControl setEnabled:NO forSegmentAtIndex:1];
+        }
+        [self segmentAction:segControl];
+        [direct setNewRtspInfo:rtsp];
+    }
+}
+
+
+
 -(void)setTxtRtspNull
 {
     DirectInfoView *direct = ((DirectInfoView*)[self viewWithTag:10001]);
     if (direct)
     {
         [direct setTxtNil];
-    }
-    else
-    {
-        
     }
 }
 

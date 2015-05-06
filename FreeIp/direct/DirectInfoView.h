@@ -18,4 +18,6 @@
 
 -(void)setTxtNil;
 
+-(void)setNewRtspInfo:(RtspInfo *)newRtsp;
+
 @end

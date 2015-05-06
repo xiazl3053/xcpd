@@ -12,6 +12,8 @@
 		4DA2BFDC1AE663F8002F46CD /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD81AE663F8002F46CD /* libavformat.a */; };
 		4DA2BFDD1AE663F8002F46CD /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFD91AE663F8002F46CD /* libavutil.a */; };
 		4DA2BFDE1AE663F8002F46CD /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA2BFDA1AE663F8002F46CD /* libswscale.a */; };
+		4DF77B831AF75F0F0068B454 /* devdiscovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF77B811AF75F0F0068B454 /* devdiscovery.m */; };
+		4DF77B861AF776E20068B454 /* DirectViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF77B851AF776E20068B454 /* DirectViewCell.m */; };
 		BB024A401AE0A5C10019CB52 /* XCHIddenView.m in Sources */ = {isa = PBXBuildFile; fileRef = BB024A3F1AE0A5C10019CB52 /* XCHIddenView.m */; };
 		BB024A431AE0A8440019CB52 /* XCBtnChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = BB024A421AE0A8440019CB52 /* XCBtnChannel.m */; };
 		BB0CB8921ADBCC3D005269EB /* libenet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0CB88E1ADBCC3D005269EB /* libenet.a */; };
@@ -197,6 +199,11 @@
 		4DA2BFD81AE663F8002F46CD /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = libs/libavformat.a; sourceTree = "<group>"; };
 		4DA2BFD91AE663F8002F46CD /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = libs/libavutil.a; sourceTree = "<group>"; };
 		4DA2BFDA1AE663F8002F46CD /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = libs/libswscale.a; sourceTree = "<group>"; };
+		4DF77B801AF75F0F0068B454 /* devdiscovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = devdiscovery.h; sourceTree = "<group>"; };
+		4DF77B811AF75F0F0068B454 /* devdiscovery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = devdiscovery.m; sourceTree = "<group>"; };
+		4DF77B821AF75F0F0068B454 /* discovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = discovery.h; sourceTree = "<group>"; };
+		4DF77B841AF776E20068B454 /* DirectViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectViewCell.h; sourceTree = "<group>"; };
+		4DF77B851AF776E20068B454 /* DirectViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectViewCell.m; sourceTree = "<group>"; };
 		BB024A3E1AE0A5C10019CB52 /* XCHIddenView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCHIddenView.h; sourceTree = "<group>"; };
 		BB024A3F1AE0A5C10019CB52 /* XCHIddenView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCHIddenView.m; sourceTree = "<group>"; };
 		BB024A411AE0A8440019CB52 /* XCBtnChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCBtnChannel.h; sourceTree = "<group>"; };
@@ -604,6 +611,8 @@
 			children = (
 				BB4402451AC543CA0050543A /* DirectInfoView.h */,
 				BB4402461AC543CA0050543A /* DirectInfoView.m */,
+				4DF77B841AF776E20068B454 /* DirectViewCell.h */,
+				4DF77B851AF776E20068B454 /* DirectViewCell.m */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -1007,6 +1016,9 @@
 		BBDC4FD11AB81A7600C81D00 /* dvr_rtsp */ = {
 			isa = PBXGroup;
 			children = (
+				4DF77B801AF75F0F0068B454 /* devdiscovery.h */,
+				4DF77B811AF75F0F0068B454 /* devdiscovery.m */,
+				4DF77B821AF75F0F0068B454 /* discovery.h */,
 				BBDC4FD21AB81A7600C81D00 /* LongseDes.c */,
 				BBDC4FD31AB81A7600C81D00 /* LongseDes.h */,
 				BBDC4FD41AB81A7600C81D00 /* private_protocol.h */,
@@ -1500,6 +1512,7 @@
 				BB95F01C1ACAAA8500EC0433 /* RecordView.m in Sources */,
 				BB9F47701AB97D05002AF594 /* Picture.m in Sources */,
 				BB95F07D1ACAB27400EC0433 /* UserInfoService.m in Sources */,
+				4DF77B861AF776E20068B454 /* DirectViewCell.m in Sources */,
 				BBDC50FA1AB81A7600C81D00 /* XLDecoderServiceImpl.m in Sources */,
 				BBDC50FC1AB81A7600C81D00 /* IDecodeSource.m in Sources */,
 				BB9F468D1AB909BF002AF594 /* XCPhoto.m in Sources */,
@@ -1608,6 +1621,7 @@
 				BB9F47751AB97D05002AF594 /* UserModel.m in Sources */,
 				BB95F0741ACAB27400EC0433 /* RegisterAuthCode.m in Sources */,
 				BBDC50B11AB81A7600C81D00 /* CustomNaviBarView.m in Sources */,
+				4DF77B831AF75F0F0068B454 /* devdiscovery.m in Sources */,
 				BBB902C21ABFB178001D37BE /* PlayViewController.m in Sources */,
 				BB95F07A1ACAB27400EC0433 /* UpdPwdService.m in Sources */,
 				BB6319551AC25DCE00016ED5 /* PDTopview.m in Sources */,

@@ -26,7 +26,7 @@
 
 
 
-@interface DirectViewController ()<UITableViewDelegate,UITableViewDataSource,VideoViewDelegate,DirectAddDelegate>
+@interface DirectViewController ()<UITableViewDelegate,UITableViewDataSource,VideoViewDelegate,DirectAddDelegate,DirectCellDelegate>
 {
     UIView *headView;
     CGFloat fWidth,fHeight;
@@ -313,6 +313,8 @@
     {
         directAdd = [[DirectAddViewController alloc] init];
     }
+    directAdd.bType = NO;
+//    directAdd.rtsp ;
     [_sonView addSubview:directAdd.view];
 }
 
@@ -557,6 +559,8 @@
             [directCell.contentView addSubview:hdView];
         }
     }
+    directCell.nRow = indexPath.row;
+    directCell.delegate = self;
     return directCell;
 }
 
@@ -910,15 +914,11 @@
     }
     return 82.5;
 }
+
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
 }
-
-
-
-
-
 
 #pragma mark 停止当前Video
 -(void)stopVideoCurent
@@ -1047,11 +1047,16 @@
     }
 }
 
-
-
-
-
-
+-(void)tapEventUpdata:(NSInteger)nRtspRow
+{
+    if (directAdd==nil)
+    {
+        directAdd = [[DirectAddViewController alloc] init];
+    }
+    directAdd.bType = YES;
+    RtspInfo *rtsp = [_aryRtsp objectAtIndex:nRtspRow];
+    directAdd.rtsp = rtsp;
+    [_sonView addSubview:directAdd.view];
+}
     
-
 @end

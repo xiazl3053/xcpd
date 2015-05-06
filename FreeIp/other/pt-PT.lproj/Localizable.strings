@@ -245,8 +245,11 @@
 
 "search"="pesquisa";
 
+"noDevice"="Nenhum dispositivo encontrado";
+
 "recordFail" = "falha de gravação";
 
+"lanSearch"="Pesquisa intranet";
 
 
 

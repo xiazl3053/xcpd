@@ -8,8 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+#import "RtspInfo.h"
 @interface DirectAddViewController : UIViewController
 
+@property (nonatomic,assign) BOOL bType;
+@property (nonatomic,strong) RtspInfo *rtsp;
+
+
 -(id)initWithType:(BOOL)bType;
+
+
 
 @end

@@ -8,6 +8,8 @@
 
 #import "DirectCell.h"
 
+#import "XCButton.h"
+
 @implementation DirectCell
 
 
@@ -30,11 +32,24 @@
     [lblType setFont:XCFONT(11.0f)];
     lblType.tag = 10004;
     
-    
+    XCButton *xcBtn = [[XCButton alloc] initWithFrame:Rect(self.contentView.frame.size.width-50, 19, 44, 44) normal:@"edit_dir" high:@"edit_dir_h"];
+    [self.contentView addSubview:xcBtn];
+    xcBtn.tag = 10009;
+    [xcBtn addTarget:self action:@selector(tapEvent) forControlEvents:UIControlEventTouchUpInside];
     [self addViewLine:1];
     
     return self;
 }
+
+-(void)tapEvent
+{
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(tapEventUpdata:)]) {
+        [_delegate tapEventUpdata:_nRow];
+    }
+}
+
+
 
 -(void)addLine
 {
@@ -44,6 +59,7 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
+    [self.contentView viewWithTag:10009].frame = Rect(self.contentView.frame.size.width-50, 19, 44, 44);
     [self.contentView viewWithTag:12349].frame = Rect(21, 80, kScreenWidth, 0.2);
     [self.contentView viewWithTag:12350].frame = Rect(21, 80.2, kScreenWidth, 0.2);
     if (!_bSon)

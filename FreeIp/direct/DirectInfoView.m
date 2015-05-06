@@ -87,7 +87,7 @@
     [self addSubview:txtPwd];
     [self addSubview:segChannel];
     txtPwd.delegate = self;
-    
+    txtUser.delegate = self;
     [self addViewLine:49.5];
     [self addViewLine:99.5];
     [self addViewLine:149.5];
@@ -99,6 +99,39 @@
     return self;
 }
 
+-(void)setNewRtspInfo:(RtspInfo *)newRtsp
+{
+    _rtsp = newRtsp;
+    txtName.text = _rtsp.strDevName;
+    txtAddress.text = _rtsp.strAddress;
+    txtUser.text = _rtsp.strUser;
+    txtPort.text = [NSString stringWithFormat:@"%li",(long)_rtsp.nPort];
+    txtPwd.text = _rtsp.strPwd;
+    
+    int nIndex = 0;
+    switch (_rtsp.nChannel) {
+        case 1:
+            nIndex = 0;
+            break;
+        case 4:
+            nIndex = 1;
+            break;
+        case 8:
+            nIndex = 2;
+            break;
+        case 16:
+            nIndex = 3;
+            break;
+        case 24:
+            nIndex = 4;
+        default:
+            
+            break;
+    }
+    [segChannel setSelectedSegmentIndex:nIndex];
+    
+    
+}
 
 -(void)addViewLine:(CGFloat)fHight
 {
@@ -161,7 +194,7 @@
 
 -(void)setTxtNil
 {
-    txtName.text  = @"";
+//    txtName.text  = @"";
     txtAddress.text = @"";
     txtPort.text = @"";
     txtUser.text = @"";
@@ -198,7 +231,13 @@
 {
     if (textField == txtPwd)
     {
-        
+        [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+        [UIView setAnimationDelay:0.5f];
+        self.superview.superview.frame = Rect(0, -100, self.superview.width, self.superview.height);
+        [UIView commitAnimations];
+    }
+    else if(textField == txtUser)
+    {
         [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
         [UIView setAnimationDelay:0.5f];
         self.superview.superview.frame = Rect(0, -50, self.superview.width, self.superview.height);

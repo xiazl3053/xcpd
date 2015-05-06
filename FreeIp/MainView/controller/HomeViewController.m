@@ -298,8 +298,9 @@
     {
         if (!playControl.bRecording)
         {
-            if (![playControl recordStart]) {
-                [viewPlay makeToast:@"录像失败"];
+            if (![playControl recordStart])
+            {
+                [viewPlay makeToast:XCLocalized(@"recordFail")];
                 return ;
             }
             btnSender.selected = YES;
